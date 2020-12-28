@@ -1,11 +1,13 @@
 package vehicles;
 
+import enums.Companies;
+
 public class CivilianShip extends Ship {
     private int currentPassengers;
     private int maxPassengers;
-    private String company;
+    private Companies company;
 
-    public CivilianShip(int x, int y, int id, double maxSpeed, int currentPassengers, int maxPassengers, String company){
+    public CivilianShip(int x, int y, int id, double maxSpeed, int currentPassengers, int maxPassengers, Companies company){
         super(x, y, id, maxSpeed);
         this.currentPassengers = currentPassengers;
         this.maxPassengers = maxPassengers;
@@ -33,11 +35,11 @@ public class CivilianShip extends Ship {
         this.maxPassengers = maxPassengers;
     }
 
-    public String getCompany() {
+    public Companies getCompany() {
         return company;
     }
 
-    public void setCompany(String company) {
+    public void setCompany(Companies company) {
         this.company = company;
     }
 }

@@ -1,14 +1,12 @@
 package vehicles;
 
-import airports.Airport;
 import interfaces.PlaneFactory;
-
-import java.util.List;
+import enums.Weapons;
 
 public class MilitaryShip extends Ship implements PlaneFactory {
-    private String weapons;
+    private Weapons weapons;
 
-    public MilitaryShip(int x, int y, int id, double maxSpeed, String weapons){
+    public MilitaryShip(int x, int y, int id, double maxSpeed, Weapons weapons){
         super(x, y, id, maxSpeed);
         this.weapons = weapons;
     }
@@ -21,11 +19,11 @@ public class MilitaryShip extends Ship implements PlaneFactory {
         super.print();
         //cos
     }
-    public String getWeapons() {
+    public Weapons getWeapons() {
         return weapons;
     }
 
-    public void setWeapons(String weapons) {
+    public void setWeapons(Weapons weapons) {
         this.weapons = weapons;
     }
 

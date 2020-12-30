@@ -8,9 +8,9 @@ public abstract class Ship extends Vehicle {
     }
 
     @Override
-    public String toString(){
+    public String getInfo(){
         return
-                super.toString() +
+                super.getInfo() +
                 "\nMax speed: " + this.getMaxSpeed() + " km/h";
     }
     public double getMaxSpeed() {

@@ -25,7 +25,7 @@ public abstract class Airport extends Point {
     }
 
     @Override
-    public String toString(){
+    public String getInfo(){
         return "\nCoordinates: " + this.getX() + " " + this.getY() +
                 "\nMaximum capacity: " + this.getMaxCapacity() +
                 "\nSpots taken: " + this.getCurrentCapacity();

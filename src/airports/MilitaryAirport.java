@@ -14,6 +14,11 @@ public class MilitaryAirport extends Airport implements PlaneFactory {
 
     @Override
     public String toString(){
+        return getName();
+    }
+
+    @Override
+    public String getInfo(){
         return "Military Airport " + this.getName() +
                 super.toString();
     }

@@ -14,8 +14,13 @@ public class MilitaryAirplane extends Airplane {
 
     @Override
     public String toString(){
+        return "Military Airplane, id: " + getId();
+    }
+
+    @Override
+    public String getInfo(){
         return "Military Airplane, id: " + this.getId() +
-                super.toString() +
+                super.getInfo() +
                 "\nArmament: " + this.getWeapons();
     }
     @Override

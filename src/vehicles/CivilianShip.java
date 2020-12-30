@@ -16,8 +16,13 @@ public class CivilianShip extends Ship {
 
     @Override
     public String toString(){
+        return "Civilian Ship, id: " + getId();
+    }
+
+    @Override
+    public String getInfo(){
         return "Civilian Ship, id: " + this.getId() +
-                super.toString() +
+                super.getInfo() +
                 "\nCurrent amount of passengers: " + this.getCurrentPassengers() +
                 "\nMaximum amount of passengers: " + this.getMaxPassengers() +
                 "\nCompany name: " + this.getCompany();

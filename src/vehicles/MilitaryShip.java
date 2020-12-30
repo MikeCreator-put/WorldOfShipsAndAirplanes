@@ -13,8 +13,13 @@ public class MilitaryShip extends Ship implements PlaneFactory {
 
     @Override
     public String toString(){
+        return "Military Ship, id: " + getId();
+    }
+
+    @Override
+    public String getInfo(){
         return "Military Ship, id: " + this.getId() +
-                super.toString() +
+                super.getInfo() +
                 "\nArmament: " + this.getWeapons();
     }
     @Override

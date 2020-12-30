@@ -5,7 +5,7 @@ public abstract class Vehicle extends Point {
     private int id;
 
     @Override
-    public String toString(){
+    public String getInfo(){
         return
                 "\nCoordinates: " + this.getX() + " " + this.getY();
     }

@@ -16,8 +16,13 @@ public class CivilianAirplane extends Airplane {
 
     @Override
     public String toString(){
+        return "Civilian Airplane, id: " + getId();
+    }
+
+    @Override
+    public String getInfo(){
         return "Civilian Airplane, id: " + this.getId() +
-                super.toString() +
+                super.getInfo() +
                 "\nCurrent amount of passengers: " + this.getCurrentPassengers() +
                 "\nMaximum amount of passengers: " + this.getMaxPassengers();
     }

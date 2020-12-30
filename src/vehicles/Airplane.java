@@ -27,9 +27,9 @@ public abstract class Airplane extends Vehicle {
     }
 
     @Override
-    public String toString(){
+    public String getInfo(){
         return
-                super.toString() +
+                super.getInfo() +
                 "\nNumber of staff: " + this.getCrewAmmount() +
                 "\nCurrent fuel: " + this.getCurrentFuel() +
                 "\nMax fuel: " + this.getMaxFuel() +

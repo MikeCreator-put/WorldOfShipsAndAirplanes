@@ -7,11 +7,12 @@ public abstract class Ship extends Vehicle {
         this.maxSpeed = maxSpeed;
     }
 
-    public void print(){
-        super.print();
-        //sth
+    @Override
+    public String toString(){
+        return
+                super.toString() +
+                "\nMax speed: " + this.getMaxSpeed() + " km/h";
     }
-
     public double getMaxSpeed() {
         return maxSpeed;
     }

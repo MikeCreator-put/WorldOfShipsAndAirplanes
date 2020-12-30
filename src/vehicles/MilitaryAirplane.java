@@ -7,14 +7,16 @@ import enums.Weapons;
 public class MilitaryAirplane extends Airplane {
     private Weapons weapons;
 
-    public MilitaryAirplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, List<Class<Airport>> path, Weapons weapons, double speed){
+    public MilitaryAirplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, List<Airport> path, Weapons weapons, double speed){
         super(x, y, id, crewAmount, currentFuel, maxFuel, path, speed);
         this.weapons = weapons;
     }
 
-    public void print(){
-        super.print();
-        //cos
+    @Override
+    public String toString(){
+        return "Military Airplane, id: " + this.getId() +
+                super.toString() +
+                "\nArmament: " + this.getWeapons();
     }
     @Override
     public void callEmergency() {}

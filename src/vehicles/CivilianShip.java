@@ -14,10 +14,15 @@ public class CivilianShip extends Ship {
         this.company = company;
     }
 
-    public void print(){
-        super.print();
-        //cos
+    @Override
+    public String toString(){
+        return "Civilian Ship, id: " + this.getId() +
+                super.toString() +
+                "\nCurrent amount of passengers: " + this.getCurrentPassengers() +
+                "\nMaximum amount of passengers: " + this.getMaxPassengers() +
+                "\nCompany name: " + this.getCompany();
     }
+
 
     public int getCurrentPassengers() {
         return currentPassengers;

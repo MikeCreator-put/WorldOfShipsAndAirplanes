@@ -10,15 +10,18 @@ public class MilitaryShip extends Ship implements PlaneFactory {
         super(x, y, id, maxSpeed);
         this.weapons = weapons;
     }
+
+    @Override
+    public String toString(){
+        return "Military Ship, id: " + this.getId() +
+                super.toString() +
+                "\nArmament: " + this.getWeapons();
+    }
     @Override
     public void createPlane() {
 
     }
 
-    public void print() {
-        super.print();
-        //cos
-    }
     public Weapons getWeapons() {
         return weapons;
     }

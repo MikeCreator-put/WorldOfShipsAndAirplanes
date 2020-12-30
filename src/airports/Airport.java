@@ -8,17 +8,14 @@ import java.util.List;
 
 public abstract class Airport extends Point {
     private String name;
-    private String type;
     private int maxCapacity;
     private int currentCapacity;
     private List<Airplane> airplanesIn;
     private List<Airport> oneWayConnections;
     private List<Airport> twoWayConnections;
 
-
-    public Airport(int x, int y, String type, String name, int maxCapacity, int currentCapacity, List<Airplane> airplanesIn, List<Airport> oneWayConnections, List<Airport> twoWayConnections){
+    public Airport(int x, int y, String name, int maxCapacity, int currentCapacity, List<Airplane> airplanesIn, List<Airport> oneWayConnections, List<Airport> twoWayConnections){
         super(x,y);
-        this.type = type;
         this.name = name;
         this.maxCapacity = maxCapacity;
         this.currentCapacity = currentCapacity;
@@ -27,16 +24,15 @@ public abstract class Airport extends Point {
         this.twoWayConnections = twoWayConnections;
     }
 
+    @Override
+    public String toString(){
+        return "\nCoordinates: " + this.getX() + " " + this.getY() +
+                "\nMaximum capacity: " + this.getMaxCapacity() +
+                "\nSpots taken: " + this.getCurrentCapacity();
+    }
+
     public void addOneWayConnection(Airport airport){}
     public void addTwoWayConnection(Airport airport){}
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public String getName() {
         return name;

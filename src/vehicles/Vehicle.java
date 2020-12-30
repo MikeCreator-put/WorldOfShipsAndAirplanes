@@ -3,9 +3,13 @@ import others.Point;
 
 public abstract class Vehicle extends Point {
     private int id;
-    private String type;
 
-    public void print(){}
+    @Override
+    public String toString(){
+        return
+                "\nCoordinates: " + this.getX() + " " + this.getY();
+    }
+
     public void moveTo(Point p){}
     public void avoidCollision(){}
 

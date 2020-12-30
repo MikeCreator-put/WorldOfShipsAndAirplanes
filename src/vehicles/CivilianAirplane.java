@@ -8,15 +8,18 @@ public class CivilianAirplane extends Airplane {
     private int maxPassengers;
     private int currentPassengers;
 
-    public CivilianAirplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, List<Class<Airport>> path, int maxPassengers, int currentPassengers, double speed){
+    public CivilianAirplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, List<Airport> path, int maxPassengers, int currentPassengers, double speed){
         super(x, y, id, crewAmount, currentFuel, maxFuel, path, speed);
         this.maxPassengers = maxPassengers;
         this.currentPassengers = currentPassengers;
     }
 
-    public void print(){
-        super.print();
-        //sth
+    @Override
+    public String toString(){
+        return "Civilian Airplane, id: " + this.getId() +
+                super.toString() +
+                "\nCurrent amount of passengers: " + this.getCurrentPassengers() +
+                "\nMaximum amount of passengers: " + this.getMaxPassengers();
     }
 
     public void exchangePassengers(){}

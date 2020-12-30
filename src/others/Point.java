@@ -4,6 +4,11 @@ public abstract class Point {
     private int x;
     private int y;
 
+    @Override
+    public String toString() {
+        return "Coordinates: " + this.x + " " + this.y;
+    }
+
     public Point(int x, int y) {
         this.x = x;
         this.y = y;

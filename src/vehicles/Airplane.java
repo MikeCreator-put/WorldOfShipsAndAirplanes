@@ -8,24 +8,36 @@ public abstract class Airplane extends Vehicle {
     private int crewAmmount;
     private double currentFuel;
     private double maxFuel;
-    private List<Class<Airport>> path;
-    private Class<Airport> nextLanding;
+    private List<Airport> path;
+    private Airport nextLanding;
     private double speed;
 
-    public Airplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, List<Class<Airport>> path, double speed){
+    public Airplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, List<Airport> path, double speed){
         super(x,y,id);
         this.crewAmmount = crewAmount;
         this.currentFuel = currentFuel;
         this.maxFuel = maxFuel;
         this.path = path;
-        this.nextLanding = path.get(0);
+        if (path.isEmpty()) {
+            this.nextLanding = null;
+        }else{
+            this.nextLanding = path.get(0);
+        }
         this.speed = speed;
     }
 
-    public void print(){
-        super.print();
-        //sth
+    @Override
+    public String toString(){
+        return
+                super.toString() +
+                "\nNumber of staff: " + this.getCrewAmmount() +
+                "\nCurrent fuel: " + this.getCurrentFuel() +
+                "\nMax fuel: " + this.getMaxFuel() +
+                "\nRoute: " + this.getPath() +
+                "\nNextLanding: " + this.getNextLanding() +
+                "\nSpeed: " + this.getSpeed() + " km/h";
     }
+
     public void refuel(){}
     public void stop(){}
     public abstract void callEmergency();
@@ -59,15 +71,15 @@ public abstract class Airplane extends Vehicle {
         this.maxFuel = maxFuel;
     }
 
-    public List<Class<Airport>> getPath() {
+    public List<Airport> getPath() {
         return path;
     }
 
-    public void setPath(List<Class<Airport>> path) {
+    public void setPath(List<Airport> path) {
         this.path = path;
     }
 
-    public Class<Airport> getNextLanding() {
+    public Airport getNextLanding() {
         return nextLanding;
     }
 

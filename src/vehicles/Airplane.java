@@ -2,6 +2,7 @@ package vehicles;
 
 import airports.Airport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Airplane extends Vehicle {
@@ -12,18 +13,21 @@ public abstract class Airplane extends Vehicle {
     private Airport nextLanding;
     private double speed;
 
-    public Airplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, List<Airport> path, double speed){
+    private Airport destination;
+
+    public Airplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, Airport destination, double speed){
         super(x,y,id);
         this.crewAmmount = crewAmount;
         this.currentFuel = currentFuel;
         this.maxFuel = maxFuel;
-        this.path = path;
+        this.path = new ArrayList<>(); //to be changed
         if (path.isEmpty()) {
             this.nextLanding = null;
         }else{
             this.nextLanding = path.get(0);
         }
         this.speed = speed;
+        this.destination = destination;
     }
 
     @Override
@@ -35,7 +39,8 @@ public abstract class Airplane extends Vehicle {
                 "\nMax fuel: " + this.getMaxFuel() +
                 "\nRoute: " + this.getPath() +
                 "\nNextLanding: " + this.getNextLanding() +
-                "\nSpeed: " + this.getSpeed() + " km/h";
+                "\nSpeed: " + this.getSpeed() + " km/h" +
+                "\nDestination: " + this.getDestination();
     }
 
     public void refuel(){}
@@ -90,4 +95,8 @@ public abstract class Airplane extends Vehicle {
     public void setSpeed(double speed) {
         this.speed = speed;
     }
+
+    public Airport getDestination() { return destination; }
+
+    public void setDestination(Airport destination) { this.destination = destination; }
 }

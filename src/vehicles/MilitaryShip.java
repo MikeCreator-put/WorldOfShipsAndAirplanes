@@ -1,9 +1,9 @@
 package vehicles;
 
-import interfaces.PlaneFactory;
+import airports.Airport;
 import enums.Weapons;
 
-public class MilitaryShip extends Ship implements PlaneFactory {
+public class MilitaryShip extends Ship {
     private Weapons weapons;
 
     public MilitaryShip(int x, int y, int id, double maxSpeed, Weapons weapons){
@@ -22,9 +22,9 @@ public class MilitaryShip extends Ship implements PlaneFactory {
                 super.getInfo() +
                 "\nArmament: " + this.getWeapons();
     }
-    @Override
-    public void createPlane() {
 
+    public Airplane createPlane(int id, Airport destination, int amountOfStaff, Weapons weapons, double speed, double currentFuel, double maxFuel) {
+        return new MilitaryAirplane(this.getX(), this.getY(), id, amountOfStaff, currentFuel, maxFuel, destination, weapons, speed);
     }
 
     public Weapons getWeapons() {
@@ -34,6 +34,4 @@ public class MilitaryShip extends Ship implements PlaneFactory {
     public void setWeapons(Weapons weapons) {
         this.weapons = weapons;
     }
-
-
 }

@@ -8,8 +8,8 @@ public class CivilianAirplane extends Airplane {
     private int maxPassengers;
     private int currentPassengers;
 
-    public CivilianAirplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, List<Airport> path, int maxPassengers, int currentPassengers, double speed){
-        super(x, y, id, crewAmount, currentFuel, maxFuel, path, speed);
+    public CivilianAirplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, Airport destination, int maxPassengers, int currentPassengers, double speed){
+        super(x, y, id, crewAmount, currentFuel, maxFuel, destination, speed);
         this.maxPassengers = maxPassengers;
         this.currentPassengers = currentPassengers;
     }

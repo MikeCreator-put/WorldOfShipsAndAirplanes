@@ -32,6 +32,15 @@ public class ControlPanel {
         }
     }
 
+    public void removeAirport(Airport airport){
+        listOfAirports.remove(airport);
+        if(airport instanceof CivilianAirport) {
+            listOfCivilianAirports.remove(airport);
+        }else{
+            listOfMilitaryAirports.remove(airport);
+        }
+    }
+
     public void addAirplane(Airplane airplane){
         listofAirplanes.add(airplane);
         if(airplane instanceof CivilianAirplane){
@@ -41,12 +50,30 @@ public class ControlPanel {
         }
     }
 
+    public void removeAirplane(Airplane airplane){
+        listofAirplanes.remove(airplane);
+        if(airplane instanceof CivilianAirplane){
+            listofCivilianAirplanes.remove(airplane);
+        }else{
+            listOfMilitaryAirplanes.remove(airplane);
+        }
+    }
+
     public void addShip(Ship ship){
         listOfShips.add(ship);
         if(ship instanceof CivilianShip){
             listofCivilianShips.add(ship);
         }else{
             listofMilitaryShips.add(ship);
+        }
+    }
+
+    public void removeShip(Ship ship){
+        listOfShips.remove(ship);
+        if(ship instanceof CivilianShip){
+            listofCivilianShips.remove(ship);
+        }else{
+            listofMilitaryShips.remove(ship);
         }
     }
 

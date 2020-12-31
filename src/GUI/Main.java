@@ -18,12 +18,21 @@ import java.util.*;
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) {
 
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Control Panel");
-        primaryStage.setScene(new Scene(root, 640, 480));
-        primaryStage.show();
+        Controller controller = new Controller();
+        controller.showStage();
+        Stage mystage1 = controller.getStage();
+        // REQUIRES FIXING
+        mystage1.widthProperty().addListener(((observable, oldValue, newValue) -> {
+            controller.resizeLine((double)newValue - (double)oldValue, 0);
+            System.out.println((double)newValue - (double)oldValue);
+        }));
+
+        mystage1.heightProperty().addListener(((observable, oldValue, newValue) -> {
+            controller.resizeLine(0,(double)newValue - (double)oldValue);
+            System.out.println((double)newValue - (double)oldValue);
+        }));
     }
 
 

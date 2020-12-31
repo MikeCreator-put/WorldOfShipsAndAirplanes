@@ -23,6 +23,13 @@ public class ControlPanel {
     private List<Ship> listofCivilianShips = new ArrayList<>();
     private List<Ship> listofMilitaryShips = new ArrayList<>();
 
+    private int id = 0;
+
+    public int getNewId(){
+        id += 1;
+        return id;
+    }
+
     public void addAirport(Airport airport){
         listOfAirports.add(airport);
         if(airport instanceof CivilianAirport){

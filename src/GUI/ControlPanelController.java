@@ -3,35 +3,31 @@ package GUI;
 import airports.Airport;
 import airports.CivilianAirport;
 import airports.MilitaryAirport;
-import com.sun.source.tree.Tree;
 import enums.Companies;
 import enums.Weapons;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import others.Point;
 import vehicles.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
-public class Controller {
+public class ControlPanelController {
     private final Stage thisStage;
 
     public Stage getStage(){ return thisStage; }
 
-    public Controller(){
+    public ControlPanelController(){
         thisStage = new Stage();
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ControlPanelFXML.fxml"));
             loader.setController(this);
             thisStage.setScene(new Scene(loader.load()));
             thisStage.setTitle("Control Panel");
@@ -148,28 +144,7 @@ public class Controller {
         }));
     }
 
-    @FXML
-    public void initialize() {
-        newPlaneButton.setOnAction(event -> newPlaneButtonClicked());
-        newShipButton.setOnAction(event -> newShipButtonClicked());
-        deleteEntityButton.setOnAction(event -> deleteEntityButtonClicked());
-        createButton.setOnAction(event -> createButtonClicked());
 
-        newEntityVbox.setVisible(false);
-        deleteEntityButton.setVisible(false);
-        callEmergencyButton.setVisible(false);
-        changeRouteButton.setVisible(false);
-
-        //test purposes
-        controlPanel.addAirplane(p1);
-        controlPanel.addAirplane(p2);
-        controlPanel.addAirport(a1);
-        controlPanel.addAirport(a2);
-        controlPanel.addShip(s1);
-        controlPanel.addShip(s2);
-
-        buildTreeView();
-    }
 
     public void deleteEntityButtonClicked(){
         if(selectedVehicle!=null){
@@ -194,16 +169,42 @@ public class Controller {
         System.out.println("NewShipButtonClicked");
     }
 
+    public void viewMapButtonClicked(){
+        MapController mapController = new MapController(this);
+        mapController.showStage();
+    }
+
     public void createButtonClicked(){
         newEntityVbox.setVisible(false);
     }
 
-    public void resizeLine(double valueX, double valueY){
-        double oldX = line.getEndX();
-        double oldY = line.getEndY();
-        line.setStartX(oldX+valueX);
-        line.setEndX(oldX+valueX);
-        line.setStartY(oldY+valueY);
+    public void resizeLine(double value){
+        double oldY = line.getStartY();
+        line.setStartY(oldY+value);
         line.setEndY(0);
+    }
+
+    @FXML
+    public void initialize() {
+        newPlaneButton.setOnAction(event -> newPlaneButtonClicked());
+        newShipButton.setOnAction(event -> newShipButtonClicked());
+        deleteEntityButton.setOnAction(event -> deleteEntityButtonClicked());
+        createButton.setOnAction(event -> createButtonClicked());
+        viewMapButton.setOnAction(event -> viewMapButtonClicked());
+
+        newEntityVbox.setVisible(false);
+        deleteEntityButton.setVisible(false);
+        callEmergencyButton.setVisible(false);
+        changeRouteButton.setVisible(false);
+
+        //test purposes
+        controlPanel.addAirplane(p1);
+        controlPanel.addAirplane(p2);
+        controlPanel.addAirport(a1);
+        controlPanel.addAirport(a2);
+        controlPanel.addShip(s1);
+        controlPanel.addShip(s2);
+
+        buildTreeView();
     }
 }

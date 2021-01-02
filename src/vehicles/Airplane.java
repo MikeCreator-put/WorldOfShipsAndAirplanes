@@ -15,15 +15,15 @@ public abstract class Airplane extends Vehicle {
 
     private Airport destination;
 
-    public Airplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, Airport destination, double speed){
-        super(x,y,id);
+    public Airplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, Airport destination, double speed) {
+        super(x, y, id);
         this.crewAmmount = crewAmount;
         this.currentFuel = currentFuel;
         this.maxFuel = maxFuel;
         this.path = new ArrayList<>(); //to be changed
         if (path.isEmpty()) {
             this.nextLanding = null;
-        }else{
+        } else {
             this.nextLanding = path.get(0);
         }
         this.speed = speed;
@@ -31,23 +31,30 @@ public abstract class Airplane extends Vehicle {
     }
 
     @Override
-    public String getInfo(){
+    public String getInfo() {
         return
                 super.getInfo() +
-                "\nNumber of staff: " + this.getCrewAmmount() +
-                "\nCurrent fuel: " + this.getCurrentFuel() +
-                "\nMax fuel: " + this.getMaxFuel() +
-                "\nRoute: " + this.getPath() +
-                "\nNextLanding: " + this.getNextLanding() +
-                "\nSpeed: " + this.getSpeed() + " km/h" +
-                "\nDestination: " + this.getDestination();
+                        "\nNumber of staff: " + this.getCrewAmmount() +
+                        "\nCurrent fuel: " + this.getCurrentFuel() +
+                        "\nMax fuel: " + this.getMaxFuel() +
+                        "\nRoute: " + this.getPath() +
+                        "\nNextLanding: " + this.getNextLanding() +
+                        "\nSpeed: " + this.getSpeed() + " km/h" +
+                        "\nDestination: " + this.getDestination();
     }
 
-    public void refuel(){}
-    public void stop(){}
+    public void refuel() {
+    }
+
+    public void stop() {
+    }
+
     public abstract void callEmergency();
-    public void travelTo(Airport airport){}
-    public Airport findNearestAirport(List<Airport> lotniska){
+
+    public void travelTo(Airport airport) {
+    }
+
+    public Airport findNearestAirport(List<Airport> lotniska) {
         return lotniska.get(0); //temporary
     }
 
@@ -96,7 +103,11 @@ public abstract class Airplane extends Vehicle {
         this.speed = speed;
     }
 
-    public Airport getDestination() { return destination; }
+    public Airport getDestination() {
+        return destination;
+    }
 
-    public void setDestination(Airport destination) { this.destination = destination; }
+    public void setDestination(Airport destination) {
+        this.destination = destination;
+    }
 }

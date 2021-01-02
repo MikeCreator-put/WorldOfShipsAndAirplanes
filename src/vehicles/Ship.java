@@ -2,17 +2,19 @@ package vehicles;
 
 public abstract class Ship extends Vehicle {
     private double maxSpeed;
-    public Ship(int x, int y, int id, double maxSpeed){
-        super(x,y,id);
+
+    public Ship(int x, int y, int id, double maxSpeed) {
+        super(x, y, id);
         this.maxSpeed = maxSpeed;
     }
 
     @Override
-    public String getInfo(){
+    public String getInfo() {
         return
                 super.getInfo() +
-                "\nMax speed: " + this.getMaxSpeed() + " km/h";
+                        "\nMax speed: " + this.getMaxSpeed() + " km/h";
     }
+
     public double getMaxSpeed() {
         return maxSpeed;
     }

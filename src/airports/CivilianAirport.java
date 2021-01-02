@@ -7,18 +7,18 @@ import java.util.List;
 
 public class CivilianAirport extends Airport {
 
-    public CivilianAirport(int x, int y, String name, int maxCapacity, int currentCapacity, List<Airplane> airplanesIn, List<Airport> oneWayConnections, List<Airport> twoWayConnections) {
-        super(x, y, name, maxCapacity, currentCapacity, airplanesIn, oneWayConnections, twoWayConnections);
+    public CivilianAirport(int x, int y, String name, int maxCapacity, List<Airplane> airplanesIn) {
+        super(x, y, name, maxCapacity, airplanesIn);
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return getName();
     }
 
     @Override
-    public String getInfo(){
-        return "Civilian Airport " + this.getName() +
+    public String getInfo() {
+        return this.getName() + " Civilian Airport" +
                 super.getInfo();
     }
 

@@ -6,18 +6,18 @@ import enums.Weapons;
 public class MilitaryShip extends Ship {
     private Weapons weapons;
 
-    public MilitaryShip(int x, int y, int id, double maxSpeed, Weapons weapons){
+    public MilitaryShip(int x, int y, int id, double maxSpeed, Weapons weapons) {
         super(x, y, id, maxSpeed);
         this.weapons = weapons;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Military Ship, id: " + getId();
     }
 
     @Override
-    public String getInfo(){
+    public String getInfo() {
         return "Military Ship, id: " + this.getId() +
                 super.getInfo() +
                 "\nArmament: " + this.getWeapons();

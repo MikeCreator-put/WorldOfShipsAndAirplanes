@@ -13,7 +13,7 @@ public class Main extends Application {
         Stage mystage1 = controlPanelController.getStage();
 
         mystage1.heightProperty().addListener(((observable, oldValue, newValue) -> {
-            controlPanelController.resizeLine((double)newValue - (double)oldValue);
+            controlPanelController.resizeLine((double) newValue - (double) oldValue);
         }));
     }
 

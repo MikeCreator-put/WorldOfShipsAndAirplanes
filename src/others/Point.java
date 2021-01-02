@@ -6,7 +6,7 @@ public class Point {
     private int y;
 
     @Override
-    public String toString(){
+    public String toString() {
         return getName();
     }
 
@@ -14,7 +14,7 @@ public class Point {
         return "Coordinates: " + this.x + " " + this.y;
     }
 
-    public Point(String name){
+    public Point(String name) {
         this.name = name;
     }
 
@@ -39,13 +39,13 @@ public class Point {
         this.y = y;
     }
 
-    public double distanceTo(Point p){
+    public double distanceTo(Point p) {
         int x1 = this.x;
         int y1 = this.y;
         int x2 = p.x;
         int y2 = p.y;
         double distance;
-        distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+        distance = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
         return distance;
     }
 

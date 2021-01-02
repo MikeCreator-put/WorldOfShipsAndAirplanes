@@ -11,29 +11,36 @@ public abstract class Airport extends Point {
     private int maxCapacity;
     private int currentCapacity;
     private List<Airplane> airplanesIn;
-    private List<Airport> oneWayConnections;
-    private List<Airport> twoWayConnections;
 
-    public Airport(int x, int y, String name, int maxCapacity, int currentCapacity, List<Airplane> airplanesIn, List<Airport> oneWayConnections, List<Airport> twoWayConnections){
-        super(x,y);
+    public Airport(int x, int y, String name, int maxCapacity, List<Airplane> airplanesIn) {
+        super(x, y);
+        this.currentCapacity = 0;
         this.name = name;
         this.maxCapacity = maxCapacity;
-        this.currentCapacity = currentCapacity;
         this.airplanesIn = airplanesIn;
-        this.oneWayConnections = oneWayConnections;
-        this.twoWayConnections = twoWayConnections;
     }
 
     @Override
-    public String getInfo(){
+    public String getInfo() {
         return "\nCoordinates: " + this.getX() + " " + this.getY() +
                 "\nMaximum capacity: " + this.getMaxCapacity() +
                 "\nSpots taken: " + this.getCurrentCapacity() +
                 "\nAirplanes in: " + this.getAirplanesIn();
     }
 
-    public void addOneWayConnection(Airport airport){}
-    public void addTwoWayConnection(Airport airport){}
+    public void addAirplaneToAirplanesIn(Airplane airplane){
+        if(currentCapacity <= maxCapacity){
+            airplanesIn.add(airplane);
+            currentCapacity += 1;
+        }
+        // ADD ELSE
+        // airplane.waitToBeletIn???
+    }
+
+    public void removeAirplaneFromAirplanesIn(Airplane airplane){
+        currentCapacity-=1;
+        airplanesIn.remove(airplane);
+    }
 
     public String getName() {
         return name;
@@ -65,21 +72,5 @@ public abstract class Airport extends Point {
 
     public void setAirplanesIn(List<Airplane> airplanesIn) {
         this.airplanesIn = airplanesIn;
-    }
-
-    public List<Airport> getOneWayConnections() {
-        return oneWayConnections;
-    }
-
-    public void setOneWayConnections(List<Airport> oneWayConnections) {
-        this.oneWayConnections = oneWayConnections;
-    }
-
-    public List<Airport> getTwoWayConnections() {
-        return twoWayConnections;
-    }
-
-    public void setTwoWayConnections(List<Airport> twoWayConnections) {
-        this.twoWayConnections = twoWayConnections;
     }
 }

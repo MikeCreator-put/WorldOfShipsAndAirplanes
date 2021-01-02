@@ -9,18 +9,18 @@ import java.util.List;
 
 public class MilitaryAirport extends Airport {
 
-    public MilitaryAirport(int x, int y, String name, int maxCapacity, int currentCapacity, List<Airplane> airplanesIn, List<Airport> oneWayConnections, List<Airport> twoWayConnections) {
-        super(x, y, name, maxCapacity, currentCapacity, airplanesIn, oneWayConnections, twoWayConnections);
+    public MilitaryAirport(int x, int y, String name, int maxCapacity, List<Airplane> airplanesIn) {
+        super(x, y, name, maxCapacity, airplanesIn);
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return getName();
     }
 
     @Override
-    public String getInfo(){
-        return "Military Airport " + this.getName() +
+    public String getInfo() {
+        return this.getName() + " Military Airport" +
                 super.getInfo();
     }
 

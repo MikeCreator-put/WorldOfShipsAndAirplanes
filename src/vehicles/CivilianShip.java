@@ -7,7 +7,7 @@ public class CivilianShip extends Ship {
     private int maxPassengers;
     private Companies company;
 
-    public CivilianShip(int x, int y, int id, double maxSpeed, int currentPassengers, int maxPassengers, Companies company){
+    public CivilianShip(int x, int y, int id, double maxSpeed, int currentPassengers, int maxPassengers, Companies company) {
         super(x, y, id, maxSpeed);
         this.currentPassengers = currentPassengers;
         this.maxPassengers = maxPassengers;
@@ -15,12 +15,12 @@ public class CivilianShip extends Ship {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Civilian Ship, id: " + getId();
     }
 
     @Override
-    public String getInfo(){
+    public String getInfo() {
         return "Civilian Ship, id: " + this.getId() +
                 super.getInfo() +
                 "\nCurrent amount of passengers: " + this.getCurrentPassengers() +

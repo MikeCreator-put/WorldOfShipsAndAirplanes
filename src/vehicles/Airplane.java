@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Airplane extends Vehicle {
-    private int crewAmmount;
+    private int amountOfStaff;
     private double currentFuel;
     private double maxFuel;
     private List<Airport> path;
@@ -15,9 +15,9 @@ public abstract class Airplane extends Vehicle {
 
     private Airport destination;
 
-    public Airplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, Airport destination, double speed) {
+    public Airplane(int x, int y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, double speed) {
         super(x, y, id);
-        this.crewAmmount = crewAmount;
+        this.amountOfStaff = amountOfStaff;
         this.currentFuel = currentFuel;
         this.maxFuel = maxFuel;
         this.path = new ArrayList<>(); //to be changed
@@ -34,7 +34,7 @@ public abstract class Airplane extends Vehicle {
     public String getInfo() {
         return
                 super.getInfo() +
-                        "\nNumber of staff: " + this.getCrewAmmount() +
+                        "\nNumber of staff: " + this.getAmountOfStaff() +
                         "\nCurrent fuel: " + this.getCurrentFuel() +
                         "\nMax fuel: " + this.getMaxFuel() +
                         "\nRoute: " + this.getPath() +
@@ -59,12 +59,12 @@ public abstract class Airplane extends Vehicle {
     }
 
 
-    public int getCrewAmmount() {
-        return crewAmmount;
+    public int getAmountOfStaff() {
+        return amountOfStaff;
     }
 
-    public void setCrewAmmount(int crewAmmount) {
-        this.crewAmmount = crewAmmount;
+    public void setAmountOfStaff(int amountOfStaff) {
+        this.amountOfStaff = amountOfStaff;
     }
 
     public double getCurrentFuel() {

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
@@ -69,16 +70,20 @@ public class ControlPanelController {
     @FXML
     VBox newEntityVbox;
     @FXML
-    ComboBox<String> newEntityComboBox;
+    Label newEntityLabel;
     @FXML
     VBox newEntityPropertiesVbox;
     @FXML
     Button createButton;
     @FXML
+    Button cancelButton;
+    @FXML
     Label informationsLabel;
     @FXML
     Line line;
-
+    @FXML
+    StackPane stackPaneForChooseTypeComboBox;
+    ComboBox newEntityChooseTypeComboBox;
 
     @FXML
     TreeView<Point> myTreeView;
@@ -160,13 +165,74 @@ public class ControlPanelController {
     }
 
     public void newPlaneButtonClicked() {
+        setNewEntityComboBox();
+        newEntityPropertiesVbox.getChildren().clear();
         newEntityVbox.setVisible(true);
-        System.out.println("NewPlaneButtonClicked");
+        newEntityLabel.setText("New Airplane");
+        newEntityChooseTypeComboBox.setOnAction(event -> handleChooseTypeComboBoxForAirplanes());
+    }
+
+    public ComboBox initializeStartingLocationComboBox() {
+        ComboBox startingLocationComboBox = new ComboBox();
+        startingLocationComboBox.setPromptText("Choose starting location");
+        return startingLocationComboBox;
+    }
+
+    public void handleChooseTypeComboBoxForAirplanes() {
+        newEntityPropertiesVbox.getChildren().clear();
+        ComboBox startingLocationComboBox = initializeStartingLocationComboBox();
+        if (newEntityChooseTypeComboBox.getValue().equals("Civilian")) {
+            startingLocationComboBox.getItems().addAll(entities.getListOfCivilianAirports());
+            newEntityPropertiesVbox.getChildren().add(startingLocationComboBox);
+            startingLocationComboBox.setOnAction(event -> handleStartingLocationComboBoxForCivilianAirplanes((Airport) startingLocationComboBox.getValue()));
+        } else if (newEntityChooseTypeComboBox.getValue().equals("Military")) {
+            startingLocationComboBox.getItems().addAll(entities.getListOfMilitaryAirports());
+            startingLocationComboBox.getItems().addAll(entities.getListofMilitaryShips());
+            newEntityPropertiesVbox.getChildren().add(startingLocationComboBox);
+            startingLocationComboBox.setOnAction(event -> handleStartingLocationComboBoxForMilitaryAirplanes((Point) startingLocationComboBox.getValue()));
+        }
+    }
+
+    public void clearNewEntityPropertiesVbox(int i) {
+        while (newEntityPropertiesVbox.getChildren().size() > i) {
+            newEntityPropertiesVbox.getChildren().remove(newEntityPropertiesVbox.getChildren().size() - 1);
+        }
+    }
+
+    public ComboBox initializeDestinationComboBox() {
+        ComboBox destinationComboBox = new ComboBox();
+        destinationComboBox.setPromptText("Choose destination");
+        return destinationComboBox;
+    }
+
+    public void handleStartingLocationComboBoxForCivilianAirplanes(Airport startingLocation) {
+        clearNewEntityPropertiesVbox(1);
+        ComboBox destinationComboBox = initializeDestinationComboBox();
+        destinationComboBox.getItems().addAll(entities.getListOfCivilianAirports());
+        destinationComboBox.getItems().remove(startingLocation);
+        newEntityPropertiesVbox.getChildren().add(destinationComboBox);
+    }
+
+    public void handleStartingLocationComboBoxForMilitaryAirplanes(Point startingLocation) {
+        clearNewEntityPropertiesVbox(1);
+        ComboBox destinationComboBox = initializeDestinationComboBox();
+        destinationComboBox.getItems().addAll(entities.getListOfMilitaryAirports());
+        if (startingLocation instanceof Airport) {
+            destinationComboBox.getItems().remove(startingLocation);
+        }
+        newEntityPropertiesVbox.getChildren().add(destinationComboBox);
     }
 
     public void newShipButtonClicked() {
+        setNewEntityComboBox();
+        newEntityPropertiesVbox.getChildren().clear();
         newEntityVbox.setVisible(true);
-        System.out.println("NewShipButtonClicked");
+        newEntityLabel.setText("New Ship");
+        newEntityChooseTypeComboBox.setOnAction(event -> handleComboBoxForShips());
+    }
+
+    public void handleComboBoxForShips() {
+        //TODO
     }
 
     public void viewMapButtonClicked() {
@@ -176,6 +242,11 @@ public class ControlPanelController {
 
     public void createButtonClicked() {
         newEntityVbox.setVisible(false);
+        //TODO
+    }
+
+    public void cancelButtonClicked() {
+        newEntityVbox.setVisible(false);
     }
 
     public void resizeLine(double value) {
@@ -184,19 +255,33 @@ public class ControlPanelController {
         line.setEndY(0);
     }
 
-    public Entities getControlPanel(){
+    public Entities getEntities() {
         return this.entities;
+    }
+
+    public void setNewEntityComboBox() {
+        newEntityChooseTypeComboBox = new ComboBox();
+        newEntityChooseTypeComboBox.setPromptText("Choose type");
+        newEntityChooseTypeComboBox.getSelectionModel().clearSelection();
+        newEntityChooseTypeComboBox.getItems().clear();
+        newEntityChooseTypeComboBox.getItems().addAll(
+                "Civilian",
+                "Military"
+        );
+        stackPaneForChooseTypeComboBox.getChildren().add(newEntityChooseTypeComboBox);
     }
 
     @FXML
     public void initialize() {
         entities = new Entities();
 
+
         newPlaneButton.setOnAction(event -> newPlaneButtonClicked());
         newShipButton.setOnAction(event -> newShipButtonClicked());
         deleteEntityButton.setOnAction(event -> deleteEntityButtonClicked());
         createButton.setOnAction(event -> createButtonClicked());
         viewMapButton.setOnAction(event -> viewMapButtonClicked());
+        cancelButton.setOnAction(event -> cancelButtonClicked());
 
         newEntityVbox.setVisible(false);
         deleteEntityButton.setVisible(false);

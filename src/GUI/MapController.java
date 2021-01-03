@@ -1,19 +1,17 @@
 package GUI;
 
+import javafx.scene.control.Tooltip;
 import others.Point;
 import airports.Airport;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.util.List;
 
 public class MapController {
@@ -25,7 +23,7 @@ public class MapController {
         root.setPrefSize(1005.0, 500.0);
         root.getChildren().add(new ImageView(new Image("map.png")));
 
-        Entities entities = controlPanelController.getControlPanel();
+        Entities entities = controlPanelController.getEntities();
 
         drawAirports(entities.getListOfCivilianAirports(), Color.BLUE);
         drawAirports(entities.getListOfMilitaryAirports(), Color.RED);
@@ -38,6 +36,8 @@ public class MapController {
             MapAirport mapAirport = new MapAirport(10, 10, color, (Airport) airport);
             root.getChildren().add(mapAirport);
             mapAirport.setOnMouseClicked(event -> controlPanelController.setInformationsLabel((Point) airport));
+            Tooltip tooltip = new Tooltip(((Airport) airport).getInfo());
+            Tooltip.install(mapAirport, tooltip);
         }
     }
 
@@ -51,7 +51,6 @@ public class MapController {
             setTranslateX(x);
             setTranslateY(y);
         }
-
     }
 
     public MapController(ControlPanelController controlPanelController) {

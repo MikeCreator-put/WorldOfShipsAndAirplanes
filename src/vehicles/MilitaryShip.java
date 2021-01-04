@@ -23,8 +23,8 @@ public class MilitaryShip extends Ship {
                 "\nArmament: " + this.getWeapons();
     }
 
-    public Airplane createPlane(int id, Airport destination, int amountOfStaff, Weapons weapons, double speed, double currentFuel, double maxFuel) {
-        return new MilitaryAirplane(this.getX(), this.getY(), id, amountOfStaff, currentFuel, maxFuel, destination, weapons, speed);
+    public Airplane createPlane(int id, Airport destination, int amountOfStaff, double speed, double maxFuel, double currentFuel) {
+        return new MilitaryAirplane(this.getX(), this.getY(), id, amountOfStaff, currentFuel, maxFuel, destination, this.getWeapons(), speed);
     }
 
     public Weapons getWeapons() {

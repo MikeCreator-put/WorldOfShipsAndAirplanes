@@ -9,8 +9,8 @@ import enums.Weapons;
 public class MilitaryAirplane extends Airplane {
     private Weapons weapons;
 
-    public MilitaryAirplane(int x, int y, int id, int crewAmount, double currentFuel, double maxFuel, Airport destination, Weapons weapons, double speed) {
-        super(x, y, id, crewAmount, currentFuel, maxFuel, destination, speed);
+    public MilitaryAirplane(int x, int y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, Weapons weapons, double speed) {
+        super(x, y, id, amountOfStaff, currentFuel, maxFuel, destination, speed);
         this.weapons = weapons;
     }
 

@@ -1,6 +1,7 @@
 package GUI;
 
 import javafx.scene.control.Tooltip;
+import javafx.scene.shape.Circle;
 import others.Point;
 import airports.Airport;
 import javafx.scene.Parent;
@@ -11,7 +12,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import vehicles.Airplane;
 
+import javax.tools.Tool;
 import java.util.List;
 
 public class MapController {
@@ -27,6 +30,9 @@ public class MapController {
 
         drawAirports(entities.getListOfCivilianAirports(), Color.BLUE);
         drawAirports(entities.getListOfMilitaryAirports(), Color.RED);
+
+        drawAirplanes(entities.getListofCivilianAirplanes(), Color.BLUE);
+        drawAirplanes(entities.getListOfMilitaryAirplanes(), Color.RED);
 
         return root;
     }
@@ -53,9 +59,27 @@ public class MapController {
         }
     }
 
+    private <T>  void drawAirplanes(List<T> airplanes, Color color){
+        for(T airplane: airplanes){
+            MapAirplane mapAirplane = new MapAirplane(5, color, (Airplane) airplane);
+            root.getChildren().add(mapAirplane);
+            mapAirplane.setOnMouseClicked(event -> controlPanelController.setInformationsLabel((Point) airplane));
+            Tooltip tooltip = new Tooltip(((Airplane)airplane).getInfo());
+            Tooltip.install(mapAirplane, tooltip);
+        }
+    }
+
+    private static class MapAirplane extends Circle{
+        Airplane airplane;
+        MapAirplane(int radius, Color color, Airplane airplane){
+            super(airplane.getX(), airplane.getY(), radius);
+            this.airplane = airplane;
+            this.setFill(color);
+        }
+    }
+
     public MapController(ControlPanelController controlPanelController) {
         this.controlPanelController = controlPanelController;
-
          thisStage = new Stage();
          thisStage.setScene(new Scene(createContent()));
          thisStage.setTitle("Map");

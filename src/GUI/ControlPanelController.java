@@ -391,7 +391,7 @@ public class ControlPanelController {
         }
         entities.addAirplane(newAirplane);
         addChild(militaryAirplanes, newAirplane);
-
+        newEntityVbox.setVisible(false);
     }
 
     public void createButtonClicked() {

@@ -51,7 +51,7 @@ public class ControlPanelController {
     private final Ship s1 = new CivilianShip(7, 7, 103, 65.42, 16, 94, Companies.company1);
     private final Ship s2 = new MilitaryShip(12, 12, 104, 94.21, Weapons.weapon2);
 
-    private Entities entities;
+    private Entities entities = new Entities();
 
 
     @FXML
@@ -163,6 +163,7 @@ public class ControlPanelController {
             }
             TreeItem<Point> c = myTreeView.getSelectionModel().getSelectedItem();
             c.getParent().getChildren().remove(c);
+            mapController.refresh();
         }
     }
 
@@ -346,52 +347,72 @@ public class ControlPanelController {
         //TODO
     }
 
+    MapController mapController = new MapController(this);
+
+
     public void viewMapButtonClicked() {
-        MapController mapController = new MapController(this);
         mapController.showStage();
     }
 
     public int checkIntValue(TextField textField, String stringValue ){
         try{
-            return Integer.parseInt(textField.getText());
+            int value = Integer.parseInt(textField.getText());
+            if(value<0){
+                AlertBox.display("Please provide positive number for " + stringValue);
+                return -1;
+            }else{
+                return value;
+            }
         }catch (NumberFormatException e){
             AlertBox.display("Please provide valid " + stringValue + " and try again");
-            return 0;
+            return -1;
         }
     }
     
     public double checkDoubleValue(TextField textField, String stringValue){
         try{
-            return Double.parseDouble(textField.getText());
+            double value = Double.parseDouble(textField.getText());
+            if(value<0){
+                AlertBox.display("Please provide positive number for " + stringValue);
+                return -1;
+            }else{
+                return value;
+            }
         }catch (NumberFormatException e){
             AlertBox.display("Please provide valid " + stringValue + " and try again");
-            return 0;
+            return -1;
         }
     }
 
     public void createCivilianAirplane(int id, Airport destination, int amountOfStaff, double speed, double maxFuel, double currentFuel){
         int maxPassengers = checkIntValue(maxPassengersTextField, "maximum amount of passengers");
         int currentPassengers = checkIntValue(currentPassengersTextField, "current amount of passengers");
-        CivilianAirport creator = (CivilianAirport) startingLocationComboBox.getValue();
-        Airplane newAirplane = creator.createPlane(id, destination, amountOfStaff, maxPassengers, currentPassengers, speed, currentFuel, maxFuel);
-        entities.addAirplane(newAirplane);
-        addChild(civilianAirplanes, newAirplane);
-        newEntityVbox.setVisible(false);
+        if(amountOfStaff!=-1 && speed != -1 && maxPassengers != -1 && currentPassengers != -1) {
+            CivilianAirport creator = (CivilianAirport) startingLocationComboBox.getValue();
+            Airplane newAirplane = creator.createPlane(id, destination, amountOfStaff, maxPassengers, currentPassengers, speed, currentFuel, maxFuel);
+            entities.addAirplane(newAirplane);
+            addChild(civilianAirplanes, newAirplane);
+            newEntityVbox.setVisible(false);
+            mapController.refresh();
+        }
     }
 
     public void createMilitaryAirplane(int id, Airport destination, int amountOfStaff, double speed, double maxFuel, double currentFuel){
         Weapons weapons = chosenWeapon;
         Airplane newAirplane;
-        if(startingLocationComboBox.getValue() instanceof Airport){
-            MilitaryAirport creator = (MilitaryAirport) startingLocationComboBox.getValue();
-            newAirplane = creator.createPlane(id, destination, amountOfStaff, weapons, speed, currentFuel, maxFuel);
-        }else{ //it is a Military Ship
-            MilitaryShip creator = (MilitaryShip) startingLocationComboBox.getValue();
-            newAirplane = creator.createPlane(id, destination, amountOfStaff, speed, currentFuel, maxFuel);
+        if(amountOfStaff!=-1 && speed != -1) {
+            if (startingLocationComboBox.getValue() instanceof Airport) {
+                MilitaryAirport creator = (MilitaryAirport) startingLocationComboBox.getValue();
+                newAirplane = creator.createPlane(id, destination, amountOfStaff, weapons, speed, currentFuel, maxFuel);
+            } else { //it is a Military Ship
+                MilitaryShip creator = (MilitaryShip) startingLocationComboBox.getValue();
+                newAirplane = creator.createPlane(id, destination, amountOfStaff, speed, currentFuel, maxFuel);
+            }
+            entities.addAirplane(newAirplane);
+            addChild(militaryAirplanes, newAirplane);
+            newEntityVbox.setVisible(false);
+            mapController.refresh();
         }
-        entities.addAirplane(newAirplane);
-        addChild(militaryAirplanes, newAirplane);
-        newEntityVbox.setVisible(false);
     }
 
     public void createButtonClicked() {
@@ -414,7 +435,6 @@ public class ControlPanelController {
                 //TODO
             }
         }
-        //newEntityVbox.setVisible(false);
     }
 
     public void cancelButtonClicked() {
@@ -464,6 +484,7 @@ public class ControlPanelController {
         entities.addAirplane(p2);
         entities.addShip(s1);
         entities.addShip(s2);
+        mapController.refresh();
 
         buildTreeView();
     }

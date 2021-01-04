@@ -2,6 +2,7 @@ package GUI;
 
 import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import others.Point;
 import airports.Airport;
 import javafx.scene.Parent;
@@ -12,30 +13,58 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import others.SeaPathNode;
 import vehicles.Airplane;
-
-import javax.tools.Tool;
 import java.util.List;
 
+
 public class MapController {
-    private Stage thisStage;
+    private final Stage thisStage;
     private Pane root = new Pane();
     private final ControlPanelController controlPanelController;
 
+    public MapController(ControlPanelController controlPanelController) {
+        this.controlPanelController = controlPanelController;
+        thisStage = new Stage();
+        refresh();
+        thisStage.setTitle("Map");
+    }
+
+    public void refresh(){
+        thisStage.setScene(new Scene(createContent()));
+    }
+
+
+    public void showStage() {
+        thisStage.setResizable(false);
+        thisStage.show();
+    }
+
     private Parent createContent(){
+        root = new Pane();
         root.setPrefSize(1005.0, 500.0);
-        root.getChildren().add(new ImageView(new Image("map.png")));
+        ImageView map = new ImageView(new Image("map.png"));
+        ImageView legend = new ImageView(new Image("mapLegend.png"));
+        legend.setX(0);
+        legend.setY(400);
+        root.getChildren().add(map);
+        root.getChildren().add(legend);
 
         Entities entities = controlPanelController.getEntities();
 
-        drawAirports(entities.getListOfCivilianAirports(), Color.BLUE);
-        drawAirports(entities.getListOfMilitaryAirports(), Color.RED);
-
-        drawAirplanes(entities.getListofCivilianAirplanes(), Color.BLUE);
-        drawAirplanes(entities.getListOfMilitaryAirplanes(), Color.RED);
-
+        try {
+            drawAirports(entities.getListOfCivilianAirports(), Color.BLUE);
+            drawAirports(entities.getListOfMilitaryAirports(), Color.RED);
+            drawAirplanes(entities.getListofCivilianAirplanes(), Color.BLUE);
+            drawAirplanes(entities.getListOfMilitaryAirplanes(), Color.RED);
+            drawSeaNodes(entities.getSeaPathNodes(), Color.AQUAMARINE);
+            drawSeaPaths(entities, 0.5, 0.5, Color.AQUAMARINE);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return root;
     }
+
 
     private <T> void drawAirports(List<T> airports, Color color){
         for (T airport: airports){
@@ -54,8 +83,8 @@ public class MapController {
             this.airport = airport;
             int x = airport.getX();
             int y = airport.getY();
-            setTranslateX(x);
-            setTranslateY(y);
+            setTranslateX(x-(double)(width/2));
+            setTranslateY(y-(double)(height/2));
         }
     }
 
@@ -78,15 +107,40 @@ public class MapController {
         }
     }
 
-    public MapController(ControlPanelController controlPanelController) {
-        this.controlPanelController = controlPanelController;
-         thisStage = new Stage();
-         thisStage.setScene(new Scene(createContent()));
-         thisStage.setTitle("Map");
+    private void drawSeaPaths(Entities entities, double opacity, double strokeWidth, Color color){
+        for(SeaPathNode startSeaPathNode : entities.getSeaPathNodes()){
+            for(Point endSeaPathNode : startSeaPathNode.getConnections()){
+                int startX = startSeaPathNode.getNode().getX();
+                int startY = startSeaPathNode.getNode().getY();
+                int endX = endSeaPathNode.getX();
+                int endY = endSeaPathNode.getY();
+                Line seaPath = new Line();
+                seaPath.setStartX(startX);
+                seaPath.setStartY(startY);
+                seaPath.setEndX(endX);
+                seaPath.setEndY(endY);
+                seaPath.setOpacity(opacity);
+                seaPath.setStrokeWidth(strokeWidth);
+                seaPath.setStroke(color);
+                root.getChildren().add(seaPath);
+            }
+        }
     }
 
-    public void showStage() {
-        thisStage.setResizable(false);
-        thisStage.show();
+    private <T> void drawSeaNodes(List<T> nodes, Color color){
+        for(T node : nodes){
+            MapSeapathNode mapSeaPathNode = new MapSeapathNode(2, color, 0.5, (SeaPathNode) node);
+            root.getChildren().add(mapSeaPathNode);
+        }
+    }
+
+    private static class MapSeapathNode extends Circle{
+        SeaPathNode seaPathNode;
+        MapSeapathNode(int radius, Color color, double opacity, SeaPathNode seaPathNode){
+            super(seaPathNode.getNode().getX(), seaPathNode.getNode().getY(), radius);
+            this.seaPathNode = seaPathNode;
+            this.setFill(color);
+            this.setOpacity(opacity);
+        }
     }
 }

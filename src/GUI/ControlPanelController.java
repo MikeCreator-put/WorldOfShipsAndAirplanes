@@ -14,20 +14,21 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import others.Point;
+import others.SeaPathNode;
 import vehicles.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 public class ControlPanelController {
     private final Stage thisStage;
-
-    public Stage getStage() {
-        return thisStage;
-    }
+    private MapController mapController;
+    private Entities entities;
 
     public ControlPanelController() {
-        thisStage = new Stage();
+        this.thisStage = new Stage();
+        this.entities = new Entities();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ControlPanelFXML.fxml"));
             loader.setController(this);
@@ -36,6 +37,10 @@ public class ControlPanelController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Stage getStage() {
+        return thisStage;
     }
 
     public void showStage() {
@@ -51,11 +56,9 @@ public class ControlPanelController {
     private final Ship s1 = new CivilianShip(7, 7, 103, 65.42, 16, 94, Companies.company1);
     private final Ship s2 = new MilitaryShip(12, 12, 104, 94.21, Weapons.weapon2);
 
-    private Entities entities = new Entities();
-
 
     @FXML
-    Button newPlaneButton;
+    Button newAirplaneButton;
     @FXML
     Button newShipButton;
     @FXML
@@ -106,7 +109,7 @@ public class ControlPanelController {
         }
     }
 
-    private <T> void addChild(TreeItem<Point> parent, T child){
+    private <T> void addChild(TreeItem<Point> parent, T child) {
         TreeItem<Point> treeItem = (TreeItem<Point>) new TreeItem<>(child);
         parent.getChildren().add(treeItem);
     }
@@ -178,10 +181,33 @@ public class ControlPanelController {
     private TextField speedTextField;
     private ComboBox<Weapons> weaponsComboBox;
     private Weapons chosenWeapon;
+    private ComboBox<Companies> companiesComboBox;
+    private Companies chosenCompany;
 
-    public void setChosenWeapon() {
+    public void setupNewEntityChooseTypeComboBox() {
+        newEntityChooseTypeComboBox = new ComboBox<>();
+        newEntityChooseTypeComboBox.setPromptText("Choose type");
+        newEntityChooseTypeComboBox.getSelectionModel().clearSelection();
+        newEntityChooseTypeComboBox.getItems().clear();
+        newEntityChooseTypeComboBox.getItems().addAll(
+                "Civilian",
+                "Military"
+        );
+        stackPaneForChooseTypeComboBox.getChildren().add(newEntityChooseTypeComboBox);
+    }
+
+    public void setChosenWeapon(int flag) { // flag == 1 - airplane, else - ship
         chosenWeapon = weaponsComboBox.getValue();
-        unlockCreateButtonForMilitaryAirplane();
+        if (flag == 1) {
+            unlockCreateButtonForMilitaryAirplane();
+        } else {
+            unlockCreateButtonForMilitaryShip();
+        }
+    }
+
+    public void setChosenCompany() {
+        chosenCompany = companiesComboBox.getValue();
+        unlockCreateButtonForCivilianShip();
     }
 
     public ComboBox<Point> initializeStartingLocationComboBox() {
@@ -190,7 +216,6 @@ public class ControlPanelController {
         startingLocationComboBox.setPromptText("Choose starting location");
         return startingLocationComboBox;
     }
-
 
     public TextField initializeAmountOfStaffTextField() {
         amountOfStaffTextField = new TextField();
@@ -233,26 +258,43 @@ public class ControlPanelController {
         }
     }
 
-    public ComboBox<Weapons> initializeWeaponsComboBox() {
+    public ComboBox<Weapons> initializeWeaponsComboBox(int flag) { //flag 1 - airplane, else - ship
         weaponsComboBox = new ComboBox<>();
         weaponsComboBox.setPromptText("Choose armament");
         weaponsComboBox.setMaxWidth(MAXWIDTH);
         weaponsComboBox.getItems().addAll(Weapons.values());
-        weaponsComboBox.setOnAction(event -> setChosenWeapon());
+        weaponsComboBox.setOnAction(event -> setChosenWeapon(flag));
         return weaponsComboBox;
     }
 
-    public void unlockCreateButtonForCivilianAirplane(){
+    public ComboBox<Companies> initializeCompaniesComboBox() {
+        companiesComboBox = new ComboBox<>();
+        companiesComboBox.setPromptText("Choose company");
+        companiesComboBox.setMaxWidth(MAXWIDTH);
+        companiesComboBox.getItems().addAll(Companies.values());
+        companiesComboBox.setOnAction(event -> setChosenCompany());
+        return companiesComboBox;
+    }
+
+    public void unlockCreateButtonForCivilianAirplane() {
         createButton.setDisable(amountOfStaffTextField.getText().equals("") || maxPassengersTextField.getText().equals("") || currentPassengersTextField.getText().equals("") || speedTextField.getText().equals(""));
     }
 
-    public void unlockCreateButtonForMilitaryAirplane(){
+    public void unlockCreateButtonForMilitaryAirplane() {
         createButton.setDisable(amountOfStaffTextField.getText().equals("") || speedTextField.getText().equals("") || chosenWeapon == null);
     }
 
-    public void newPlaneButtonClicked() {
+    public void unlockCreateButtonForCivilianShip() {
+        createButton.setDisable(maxPassengersTextField.getText().equals("") || currentPassengersTextField.getText().equals("") || speedTextField.getText().equals("") || chosenCompany == null);
+    }
+
+    public void unlockCreateButtonForMilitaryShip() {
+        createButton.setDisable(speedTextField.getText().equals("") || chosenWeapon == null);
+    }
+
+    public void newAirplaneButtonClicked() {
         createButton.setDisable(true);
-        setNewEntityComboBox();
+        setupNewEntityChooseTypeComboBox();
         newEntityPropertiesVbox.getChildren().clear();
         newEntityVbox.setVisible(true);
         newEntityLabel.setText("New Airplane");
@@ -266,7 +308,7 @@ public class ControlPanelController {
             startingLocationComboBox.getItems().addAll(entities.getListOfCivilianAirports());
             newEntityPropertiesVbox.getChildren().add(startingLocationComboBox);
             startingLocationComboBox.setOnAction(event -> handleStartingLocationComboBoxForCivilianAirplanes());
-        } else if (newEntityChooseTypeComboBox.getValue().equals("Military")) {
+        } else { //it equals military
             startingLocationComboBox.getItems().addAll(entities.getListOfMilitaryAirports());
             startingLocationComboBox.getItems().addAll(entities.getListofMilitaryShips());
             newEntityPropertiesVbox.getChildren().add(startingLocationComboBox);
@@ -294,7 +336,7 @@ public class ControlPanelController {
         destinationComboBox.setOnAction(event -> handleDestinationComboBoxForMilitaryAirplane());
     }
 
-    public void addListnerToFieldsForCivilianAirplane(TextField textField){
+    public void addListnerToFieldsForCivilianAirplane(TextField textField) {
         textField.textProperty().addListener(((observable, oldValue, newValue) -> unlockCreateButtonForCivilianAirplane()));
     }
 
@@ -308,13 +350,10 @@ public class ControlPanelController {
         addListnerToFieldsForCivilianAirplane(maxPassengersTextField);
         addListnerToFieldsForCivilianAirplane(currentPassengersTextField);
         addListnerToFieldsForCivilianAirplane(speedTextField);
-        newEntityPropertiesVbox.getChildren().add(amountOfStaffTextField);
-        newEntityPropertiesVbox.getChildren().add(maxPassengersTextField);
-        newEntityPropertiesVbox.getChildren().add(currentPassengersTextField);
-        newEntityPropertiesVbox.getChildren().add(speedTextField);
+        newEntityPropertiesVbox.getChildren().addAll(amountOfStaffTextField, maxPassengersTextField, currentPassengersTextField, speedTextField);
     }
 
-    public void addListnerToFieldsForMilitaryAirplane(TextField textField){
+    public void addListnerToFieldsForMilitaryAirplane(TextField textField) {
         textField.textProperty().addListener(((observable, oldValue, newValue) -> unlockCreateButtonForMilitaryAirplane()));
     }
 
@@ -324,9 +363,8 @@ public class ControlPanelController {
         speedTextField = initializeSpeedTextField();
         addListnerToFieldsForMilitaryAirplane(amountOfStaffTextField);
         addListnerToFieldsForMilitaryAirplane(speedTextField);
-        newEntityPropertiesVbox.getChildren().add(amountOfStaffTextField);
-        newEntityPropertiesVbox.getChildren().add(speedTextField);
-        weaponsComboBox = initializeWeaponsComboBox();
+        newEntityPropertiesVbox.getChildren().addAll(amountOfStaffTextField, speedTextField);
+        weaponsComboBox = initializeWeaponsComboBox(1);
         if (startingLocationComboBox.getValue() instanceof MilitaryShip) {
             chosenWeapon = ((MilitaryShip) startingLocationComboBox.getValue()).getWeapons();
         } else {
@@ -334,60 +372,81 @@ public class ControlPanelController {
         }
     }
 
+    public void addListnerToFieldsForCivilianShip(TextField textField) {
+        textField.textProperty().addListener(((observable, oldValue, newValue) -> unlockCreateButtonForCivilianShip()));
+    }
+
+    public void addListnerToFieldsForMilitaryShip(TextField textField) {
+        textField.textProperty().addListener(((observable, oldValue, newValue) -> unlockCreateButtonForMilitaryShip()));
+    }
+
     public void newShipButtonClicked() {
         createButton.setDisable(true);
-        setNewEntityComboBox();
+        setupNewEntityChooseTypeComboBox();
         newEntityPropertiesVbox.getChildren().clear();
         newEntityVbox.setVisible(true);
         newEntityLabel.setText("New Ship");
-        newEntityChooseTypeComboBox.setOnAction(event -> handleComboBoxForShips());
+        newEntityChooseTypeComboBox.setOnAction(event -> handleChooseTypeComboBoxForShips());
     }
 
-    public void handleComboBoxForShips() {
-        //TODO
+    public void handleChooseTypeComboBoxForShips() {
+        newEntityPropertiesVbox.getChildren().clear();
+        speedTextField = initializeSpeedTextField();
+        if (newEntityChooseTypeComboBox.getValue().equals("Civilian")) {
+            maxPassengersTextField = initializeMaxPassengersTextField();
+            currentPassengersTextField = initializeCurrentPassengersTextField();
+            companiesComboBox = initializeCompaniesComboBox();
+            addListnerToFieldsForCivilianShip(maxPassengersTextField);
+            addListnerToFieldsForCivilianShip(currentPassengersTextField);
+            addListnerToFieldsForCivilianShip(speedTextField);
+            newEntityPropertiesVbox.getChildren().addAll(companiesComboBox, maxPassengersTextField, currentPassengersTextField, speedTextField);
+        } else { //it equals military
+            weaponsComboBox = initializeWeaponsComboBox(2);
+            addListnerToFieldsForMilitaryShip(speedTextField);
+            newEntityPropertiesVbox.getChildren().addAll(weaponsComboBox, speedTextField);
+        }
     }
-
-    MapController mapController = new MapController(this);
 
 
     public void viewMapButtonClicked() {
         mapController.showStage();
     }
 
-    public int checkIntValue(TextField textField, String stringValue ){
-        try{
+    public int checkIntValue(TextField textField, String stringValue) {
+        try {
             int value = Integer.parseInt(textField.getText());
-            if(value<0){
+            if (value < 0) {
                 AlertBox.display("Please provide positive number for " + stringValue);
                 return -1;
-            }else{
+            } else {
                 return value;
             }
-        }catch (NumberFormatException e){
-            AlertBox.display("Please provide valid " + stringValue + " and try again");
-            return -1;
-        }
-    }
-    
-    public double checkDoubleValue(TextField textField, String stringValue){
-        try{
-            double value = Double.parseDouble(textField.getText());
-            if(value<0){
-                AlertBox.display("Please provide positive number for " + stringValue);
-                return -1;
-            }else{
-                return value;
-            }
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             AlertBox.display("Please provide valid " + stringValue + " and try again");
             return -1;
         }
     }
 
-    public void createCivilianAirplane(int id, Airport destination, int amountOfStaff, double speed, double maxFuel, double currentFuel){
+    public double checkDoubleValue(TextField textField, String stringValue) {
+        try {
+            double value = Double.parseDouble(textField.getText());
+            if (value < 0) {
+                AlertBox.display("Please provide positive number for " + stringValue);
+                return -1;
+            } else {
+                return value;
+            }
+        } catch (NumberFormatException e) {
+            AlertBox.display("Please provide valid " + stringValue + " and try again");
+            return -1;
+        }
+    }
+
+    public void createCivilianAirplane(Airport destination, int amountOfStaff, double speed, double maxFuel, double currentFuel) {
         int maxPassengers = checkIntValue(maxPassengersTextField, "maximum amount of passengers");
         int currentPassengers = checkIntValue(currentPassengersTextField, "current amount of passengers");
-        if(amountOfStaff!=-1 && speed != -1 && maxPassengers != -1 && currentPassengers != -1) {
+        if (amountOfStaff != -1 && speed != -1 && maxPassengers != -1 && currentPassengers != -1) {
+            int id = entities.getNewId();
             CivilianAirport creator = (CivilianAirport) startingLocationComboBox.getValue();
             Airplane newAirplane = creator.createPlane(id, destination, amountOfStaff, maxPassengers, currentPassengers, speed, currentFuel, maxFuel);
             entities.addAirplane(newAirplane);
@@ -397,10 +456,11 @@ public class ControlPanelController {
         }
     }
 
-    public void createMilitaryAirplane(int id, Airport destination, int amountOfStaff, double speed, double maxFuel, double currentFuel){
+    public void createMilitaryAirplane(Airport destination, int amountOfStaff, double speed, double maxFuel, double currentFuel) {
         Weapons weapons = chosenWeapon;
         Airplane newAirplane;
-        if(amountOfStaff!=-1 && speed != -1) {
+        if (amountOfStaff != -1 && speed != -1) {
+            int id = entities.getNewId();
             if (startingLocationComboBox.getValue() instanceof Airport) {
                 MilitaryAirport creator = (MilitaryAirport) startingLocationComboBox.getValue();
                 newAirplane = creator.createPlane(id, destination, amountOfStaff, weapons, speed, currentFuel, maxFuel);
@@ -415,24 +475,53 @@ public class ControlPanelController {
         }
     }
 
+    public void createCivilianShip(int x, int y, double speed) {
+        int maxPassengers = checkIntValue(maxPassengersTextField, "maximum amount of passengers");
+        int currentPassengers = checkIntValue(currentPassengersTextField, "current amount of passengers");
+        Companies company = chosenCompany;
+        if (speed != -1 && maxPassengers != -1 && currentPassengers != -1) {
+            int id = entities.getNewId();
+            Ship newShip = new CivilianShip(x, y, id, speed, currentPassengers, maxPassengers, company);
+            entities.addShip(newShip);
+            addChild(civilianShips, newShip);
+            newEntityVbox.setVisible(false);
+            mapController.refresh();
+        }
+    }
+
+    public void createMilitaryShip(int x, int y, double speed) {
+        Weapons weapons = chosenWeapon;
+        if (speed != -1) {
+            int id = entities.getNewId();
+            Ship newShip = new MilitaryShip(x, y, id, speed, weapons);
+            entities.addShip(newShip);
+            addChild(militaryShips, newShip);
+            newEntityVbox.setVisible(false);
+            mapController.refresh();
+        }
+    }
+
     public void createButtonClicked() {
-        int id = entities.getNewId();
-        if(newEntityLabel.getText().equals("New Airplane")){
+        double speed = checkDoubleValue(speedTextField, "speed");
+        if (newEntityLabel.getText().equals("New Airplane")) {
             Airport destination = destinationComboBox.getValue();
             int amountOfStaff = checkIntValue(amountOfStaffTextField, "amount of staff");
-            double speed = checkDoubleValue(speedTextField, "speed");
-            double maxFuel = 1000; //TODO TODO TODO TODO TODO TODO TODO TODO
+            double maxFuel = 1000; //TODO
             double currentFuel = 1000;
-            if(newEntityChooseTypeComboBox.getValue().equals("Civilian")){
-                createCivilianAirplane(id, destination, amountOfStaff, speed, maxFuel, currentFuel);
-            }else{ //it equals "Military"
-                createMilitaryAirplane(id, destination, amountOfStaff, speed, maxFuel, currentFuel);
+            if (newEntityChooseTypeComboBox.getValue().equals("Civilian")) {
+                createCivilianAirplane(destination, amountOfStaff, speed, maxFuel, currentFuel);
+            } else { //it equals "Military"
+                createMilitaryAirplane(destination, amountOfStaff, speed, maxFuel, currentFuel);
             }
-        }else{  //it equals "New Ship"
-            if(newEntityChooseTypeComboBox.getValue().equals("Civilian")){
-                //TODO
-            }else{   //it equals "Military"
-                //TODO
+        } else {  //it equals "New Ship"
+            Random random = new Random();
+            SeaPathNode shipsStartingLocation = entities.getSeaPathNodes().get(random.nextInt(entities.getSeaPathNodes().size()));
+            int x = shipsStartingLocation.getNode().getX();
+            int y = shipsStartingLocation.getNode().getY();
+            if (newEntityChooseTypeComboBox.getValue().equals("Civilian")) {
+                createCivilianShip(x, y, speed);
+            } else {   //it equals "Military"
+                createMilitaryShip(x, y, speed);
             }
         }
     }
@@ -451,23 +540,12 @@ public class ControlPanelController {
         return this.entities;
     }
 
-    public void setNewEntityComboBox() {
-        newEntityChooseTypeComboBox = new ComboBox<>();
-        newEntityChooseTypeComboBox.setPromptText("Choose type");
-        newEntityChooseTypeComboBox.getSelectionModel().clearSelection();
-        newEntityChooseTypeComboBox.getItems().clear();
-        newEntityChooseTypeComboBox.getItems().addAll(
-                "Civilian",
-                "Military"
-        );
-        stackPaneForChooseTypeComboBox.getChildren().add(newEntityChooseTypeComboBox);
-    }
 
     @FXML
     public void initialize() {
-        entities = new Entities();
+        mapController = new MapController(this);
 
-        newPlaneButton.setOnAction(event -> newPlaneButtonClicked());
+        newAirplaneButton.setOnAction(event -> newAirplaneButtonClicked());
         newShipButton.setOnAction(event -> newShipButtonClicked());
         deleteEntityButton.setOnAction(event -> deleteEntityButtonClicked());
         createButton.setOnAction(event -> createButtonClicked());

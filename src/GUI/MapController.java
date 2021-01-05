@@ -1,5 +1,6 @@
 package GUI;
 
+import com.sun.prism.ps.ShaderGraphics;
 import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -15,6 +16,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import others.SeaPathNode;
 import vehicles.Airplane;
+import vehicles.Ship;
+
 import java.util.List;
 
 
@@ -53,12 +56,15 @@ public class MapController {
         Entities entities = controlPanelController.getEntities();
 
         try {
+            drawSeaNodes(entities.getSeaPathNodes(), Color.AQUAMARINE);
+            drawSeaPaths(entities, 0.5, 0.5, Color.AQUAMARINE);
             drawAirports(entities.getListOfCivilianAirports(), Color.BLUE);
             drawAirports(entities.getListOfMilitaryAirports(), Color.RED);
             drawAirplanes(entities.getListofCivilianAirplanes(), Color.BLUE);
             drawAirplanes(entities.getListOfMilitaryAirplanes(), Color.RED);
-            drawSeaNodes(entities.getSeaPathNodes(), Color.AQUAMARINE);
-            drawSeaPaths(entities, 0.5, 0.5, Color.AQUAMARINE);
+            drawShips(entities.getListofCivilianShips(), Color.ORANGE);
+            drawShips(entities.getListofMilitaryShips(), Color.PURPLE);
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -141,6 +147,25 @@ public class MapController {
             this.seaPathNode = seaPathNode;
             this.setFill(color);
             this.setOpacity(opacity);
+        }
+    }
+
+    private <T>  void drawShips(List<T> ships, Color color){
+        for(T ship: ships){
+            MapShip mapShip = new MapShip(5, color, (Ship) ship);
+            root.getChildren().add(mapShip);
+            mapShip.setOnMouseClicked(event -> controlPanelController.setInformationsLabel((Point) ship));
+            Tooltip tooltip = new Tooltip(((Ship)ship).getInfo());
+            Tooltip.install(mapShip, tooltip);
+        }
+    }
+
+    private static class MapShip extends Circle{
+        Ship ship;
+        MapShip(int radius, Color color, Ship ship){
+            super(ship.getX(), ship.getY(), radius);
+            this.ship = ship;
+            this.setFill(color);
         }
     }
 }

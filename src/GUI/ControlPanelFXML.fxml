@@ -28,7 +28,7 @@
             <children>
                 <HBox spacing="10.0">
                     <children>
-                        <Button fx:id="newPlaneButton" mnemonicParsing="false" text="New Airplane" />
+                        <Button fx:id="newAirplaneButton" mnemonicParsing="false" text="New Airplane" />
                         <Button fx:id="newShipButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="New Ship" />
                         <Region HBox.hgrow="ALWAYS" />
                         <Button fx:id="viewMapButton" layoutX="62.0" layoutY="10.0" mnemonicParsing="false" text="View Map" />

@@ -2,12 +2,15 @@ package vehicles;
 
 import airports.Airport;
 import enums.Weapons;
+import others.SeaPathNode;
+
+import java.util.List;
 
 public class MilitaryShip extends Ship {
     private Weapons weapons;
 
-    public MilitaryShip(int x, int y, int id, double maxSpeed, Weapons weapons) {
-        super(x, y, id, maxSpeed);
+    public MilitaryShip(double x, double y, int id, double maxSpeed, Weapons weapons, SeaPathNode startingLocationNode, List<SeaPathNode> listOfSeaPathNodes) {
+        super(x, y, id, maxSpeed, startingLocationNode, listOfSeaPathNodes);
         this.weapons = weapons;
     }
 

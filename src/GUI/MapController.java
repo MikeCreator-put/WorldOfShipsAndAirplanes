@@ -1,6 +1,5 @@
 package GUI;
 
-import com.sun.prism.ps.ShaderGraphics;
 import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -56,7 +55,7 @@ public class MapController {
         Entities entities = controlPanelController.getEntities();
 
         try {
-            drawSeaNodes(entities.getSeaPathNodes(), Color.AQUAMARINE);
+            drawSeaNodes(entities.getListOfSeaPathNodes(), Color.AQUAMARINE);
             drawSeaPaths(entities, 0.5, 0.5, Color.AQUAMARINE);
             drawAirports(entities.getListOfCivilianAirports(), Color.BLUE);
             drawAirports(entities.getListOfMilitaryAirports(), Color.RED);
@@ -87,8 +86,8 @@ public class MapController {
         MapAirport(int width, int height, Color color, Airport airport){
             super(width, height, color);
             this.airport = airport;
-            int x = airport.getX();
-            int y = airport.getY();
+            double x = airport.getX();
+            double y = airport.getY();
             setTranslateX(x-(double)(width/2));
             setTranslateY(y-(double)(height/2));
         }
@@ -107,19 +106,21 @@ public class MapController {
     private static class MapAirplane extends Circle{
         Airplane airplane;
         MapAirplane(int radius, Color color, Airplane airplane){
-            super(airplane.getX(), airplane.getY(), radius);
+            this.centerXProperty().bind(airplane.xProperty());
+            this.centerYProperty().bind(airplane.yProperty());
+            this.setRadius(radius);
             this.airplane = airplane;
             this.setFill(color);
         }
     }
 
     private void drawSeaPaths(Entities entities, double opacity, double strokeWidth, Color color){
-        for(SeaPathNode startSeaPathNode : entities.getSeaPathNodes()){
-            for(Point endSeaPathNode : startSeaPathNode.getConnections()){
-                int startX = startSeaPathNode.getNode().getX();
-                int startY = startSeaPathNode.getNode().getY();
-                int endX = endSeaPathNode.getX();
-                int endY = endSeaPathNode.getY();
+        for(SeaPathNode startSeaPathNode : entities.getListOfSeaPathNodes()){
+            for(Point endPoint : startSeaPathNode.getConnections()){
+                double startX = startSeaPathNode.getNode().getX();
+                double startY = startSeaPathNode.getNode().getY();
+                double endX = endPoint.getX();
+                double endY = endPoint.getY();
                 Line seaPath = new Line();
                 seaPath.setStartX(startX);
                 seaPath.setStartY(startY);
@@ -163,7 +164,9 @@ public class MapController {
     private static class MapShip extends Circle{
         Ship ship;
         MapShip(int radius, Color color, Ship ship){
-            super(ship.getX(), ship.getY(), radius);
+            this.centerXProperty().bind(ship.xProperty());
+            this.centerYProperty().bind(ship.yProperty());
+            this.setRadius(radius);
             this.ship = ship;
             this.setFill(color);
         }

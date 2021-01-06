@@ -1,14 +1,17 @@
 package vehicles;
 
 import enums.Companies;
+import others.SeaPathNode;
+
+import java.util.List;
 
 public class CivilianShip extends Ship {
     private int currentPassengers;
     private int maxPassengers;
     private Companies company;
 
-    public CivilianShip(int x, int y, int id, double maxSpeed, int currentPassengers, int maxPassengers, Companies company) {
-        super(x, y, id, maxSpeed);
+    public CivilianShip(double x, double y, int id, double maxSpeed, int currentPassengers, int maxPassengers, Companies company, SeaPathNode startingLocationNode, List<SeaPathNode> listOfSeaPathNodes) {
+        super(x, y, id, maxSpeed, startingLocationNode, listOfSeaPathNodes);
         this.currentPassengers = currentPassengers;
         this.maxPassengers = maxPassengers;
         this.company = company;

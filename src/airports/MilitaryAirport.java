@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MilitaryAirport extends Airport {
 
-    public MilitaryAirport(int x, int y, String name, int maxCapacity, List<Airplane> airplanesIn) {
+    public MilitaryAirport(double x, double y, String name, int maxCapacity, List<Airplane> airplanesIn) {
         super(x, y, name, maxCapacity, airplanesIn);
     }
 

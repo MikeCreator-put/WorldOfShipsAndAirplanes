@@ -1,6 +1,7 @@
 package vehicles;
 
 import airports.Airport;
+import others.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,22 +12,25 @@ public abstract class Airplane extends Vehicle {
     private double maxFuel;
     private List<Airport> path;
     private Airport nextLanding;
-    private double speed;
 
     private Airport destination;
 
-    public Airplane(int x, int y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, double speed) {
-        super(x, y, id);
+    @Override
+    public void run(){//TODO
+    }
+
+
+    public Airplane(double x, double y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, double maxSpeed) {
+        super(x, y, id, maxSpeed);
         this.amountOfStaff = amountOfStaff;
         this.currentFuel = currentFuel;
         this.maxFuel = maxFuel;
-        this.path = new ArrayList<>(); //to be changed
+        this.path = new ArrayList<>(); //TODO to be changed
         if (path.isEmpty()) {
             this.nextLanding = null;
         } else {
             this.nextLanding = path.get(0);
         }
-        this.speed = speed;
         this.destination = destination;
     }
 
@@ -39,7 +43,7 @@ public abstract class Airplane extends Vehicle {
                         "\nMax fuel: " + this.getMaxFuel() +
                         "\nRoute: " + this.getPath() +
                         "\nNextLanding: " + this.getNextLanding() +
-                        "\nSpeed: " + this.getSpeed() + " km/h" +
+                        "\nSpeed: " + this.getMaxSpeed() + " units" +
                         "\nDestination: " + this.getDestination();
     }
 
@@ -95,13 +99,6 @@ public abstract class Airplane extends Vehicle {
         return nextLanding;
     }
 
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
 
     public Airport getDestination() {
         return destination;

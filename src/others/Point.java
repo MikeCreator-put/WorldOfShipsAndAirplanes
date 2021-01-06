@@ -1,9 +1,12 @@
 package others;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+
 public class Point {
     private String name;
-    private int x;
-    private int y;
+    private DoubleProperty x = new SimpleDoubleProperty(this, "x");
+    private DoubleProperty y = new SimpleDoubleProperty(this, "y");
 
     @Override
     public String toString() {
@@ -11,42 +14,16 @@ public class Point {
     }
 
     public String getInfo() {
-        return "Coordinates: " + this.x + " " + this.y;
+        return "\nCoordinates: " + String.format("%,.0f", this.getX()) + " " + String.format("%,.0f",this.getY());
+    }
+
+    public Point(double x, double y){
+        this.setX(x);
+        this.setY(y);
     }
 
     public Point(String name) {
         this.name = name;
-    }
-
-    public Point(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public double distanceTo(Point p) {
-        int x1 = this.x;
-        int y1 = this.y;
-        int x2 = p.x;
-        int y2 = p.y;
-        double distance;
-        distance = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-        return distance;
     }
 
     public String getName() {
@@ -55,5 +32,29 @@ public class Point {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getX() {
+        return x.get();
+    }
+
+    public DoubleProperty xProperty() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x.set(x);
+    }
+
+    public double getY() {
+        return y.get();
+    }
+
+    public DoubleProperty yProperty() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y.set(y);
     }
 }

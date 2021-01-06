@@ -1,14 +1,20 @@
 package GUI;
 
+import javafx.animation.Animation;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import others.Point;
+import vehicles.Ship;
 
 public class Main extends Application {
+    ControlPanelController controlPanelController;
+
 
     @Override
     public void start(Stage primaryStage) {
 
-        ControlPanelController controlPanelController = new ControlPanelController();
+        controlPanelController = new ControlPanelController();
         controlPanelController.showStage();
         Stage mystage1 = controlPanelController.getStage();
 

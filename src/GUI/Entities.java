@@ -37,7 +37,7 @@ public class Entities {
         SeaPathNode seaPathNode2 = new SeaPathNode(seaNode2, new ArrayList<>(List.of(seaNode1, seaNode3)));
         SeaPathNode seaPathNode3 = new SeaPathNode(seaNode3, new ArrayList<>(List.of(seaNode2, seaNode4)));
         SeaPathNode seaPathNode4 = new SeaPathNode(seaNode4, new ArrayList<>(List.of(seaNode3, seaNode5)));
-        SeaPathNode seaPathNode5 = new SeaPathNode(seaNode5, new ArrayList<>(List.of(seaNode1, seaNode4)));
+        SeaPathNode seaPathNode5 = new SeaPathNode(seaNode5, new ArrayList<>(List.of(seaNode1, seaNode4, seaNode6)));
         SeaPathNode seaPathNode6 = new SeaPathNode(seaNode6, new ArrayList<>(List.of(seaNode5, seaNode7)));
         SeaPathNode seaPathNode7 = new SeaPathNode(seaNode7, new ArrayList<>(List.of(seaNode6, seaNode8, seaNode9)));
         SeaPathNode seaPathNode8 = new SeaPathNode(seaNode8, new ArrayList<>(List.of(seaNode7, seaNode10)));
@@ -49,7 +49,7 @@ public class Entities {
         SeaPathNode seaPathNode14 = new SeaPathNode(seaNode14, new ArrayList<>(List.of(seaNode13, seaNode15)));
         SeaPathNode seaPathNode15 = new SeaPathNode(seaNode15, new ArrayList<>(List.of(seaNode10, seaNode14)));
 
-        this.seaPathNodes = new ArrayList<>(List.of(seaPathNode1, seaPathNode2, seaPathNode3, seaPathNode4, seaPathNode5, seaPathNode6, seaPathNode7, seaPathNode8, seaPathNode9, seaPathNode10, seaPathNode11, seaPathNode12, seaPathNode13, seaPathNode14, seaPathNode15));
+        this.listOfSeaPathNodes = new ArrayList<>(List.of(seaPathNode1, seaPathNode2, seaPathNode3, seaPathNode4, seaPathNode5, seaPathNode6, seaPathNode7, seaPathNode8, seaPathNode9, seaPathNode10, seaPathNode11, seaPathNode12, seaPathNode13, seaPathNode14, seaPathNode15));
 
 
 
@@ -80,10 +80,7 @@ public class Entities {
     private List<Ship> listofMilitaryShips = new ArrayList<>();
 
 
-    private List<SeaPathNode> seaPathNodes;
-    public List<SeaPathNode> getSeaPathNodes() {
-        return seaPathNodes;
-    }
+    private List<SeaPathNode> listOfSeaPathNodes;
 
 
     private int id = 0;
@@ -215,5 +212,11 @@ public class Entities {
 
     public List<Ship> getListofMilitaryShips() {
         return listofMilitaryShips;
+    }
+
+    public List<SeaPathNode> getListOfSeaPathNodes(){return listOfSeaPathNodes;}
+
+    public void setListOfSeaPathNodes(List<SeaPathNode> listOfSeaPathNodes) {
+        this.listOfSeaPathNodes = listOfSeaPathNodes;
     }
 }

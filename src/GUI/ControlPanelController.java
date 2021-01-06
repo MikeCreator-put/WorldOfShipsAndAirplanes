@@ -26,9 +26,14 @@ public class ControlPanelController {
     private MapController mapController;
     private Entities entities;
 
+    public MapController getMapController(){
+        return mapController;
+    }
+
     public ControlPanelController() {
+        entities = new Entities();
         this.thisStage = new Stage();
-        this.entities = new Entities();
+        this.entities = entities;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ControlPanelFXML.fxml"));
             loader.setController(this);
@@ -52,9 +57,7 @@ public class ControlPanelController {
 
 
     private final Airplane p1 = new CivilianAirplane(23, 23, 101, 15, 32.32, 32.32, null, 50, 12, 15);
-    private final Airplane p2 = new MilitaryAirplane(51, 51, 102, 31, 99.99, 99.99, null, Weapons.weapon1, 99);
-    private final Ship s1 = new CivilianShip(7, 7, 103, 65.42, 16, 94, Companies.company1);
-    private final Ship s2 = new MilitaryShip(12, 12, 104, 94.21, Weapons.weapon2);
+    private final Airplane p2 = new MilitaryAirplane(51, 51, 102, 31, 99.99, 99.99, null, Weapons.NuclearWarhead, 99);
 
 
     @FXML
@@ -152,7 +155,12 @@ public class ControlPanelController {
     }
 
     private void handleTreeClicks() {
-        myTreeView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> setInformationsLabel(newValue.getValue())));
+        myTreeView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
+            setInformationsLabel(newValue.getValue());
+            newValue.getValue().xProperty().addListener((((observable1, oldValue1, newValue1) -> {
+                setInformationsLabel(newValue.getValue());
+            })));
+        }));
     }
 
 
@@ -238,10 +246,14 @@ public class ControlPanelController {
         return currentPassengersTextField;
     }
 
-    public TextField initializeSpeedTextField() {
+    public TextField initializeSpeedTextField(int flag) { //flag == 1 - civilian, else - military
         speedTextField = new TextField();
-        speedTextField.setPromptText("Set airplane's speed (double)");
         speedTextField.setMaxWidth(MAXWIDTH);
+        if(flag == 1) {
+            speedTextField.setPromptText("Set airplane's speed (double)");
+        }else{
+            speedTextField.setPromptText("Set ship's speed (double)");
+        }
         return speedTextField;
     }
 
@@ -345,7 +357,7 @@ public class ControlPanelController {
         amountOfStaffTextField = initializeAmountOfStaffTextField();
         maxPassengersTextField = initializeMaxPassengersTextField();
         currentPassengersTextField = initializeCurrentPassengersTextField();
-        speedTextField = initializeSpeedTextField();
+        speedTextField = initializeSpeedTextField(1);
         addListnerToFieldsForCivilianAirplane(amountOfStaffTextField);
         addListnerToFieldsForCivilianAirplane(maxPassengersTextField);
         addListnerToFieldsForCivilianAirplane(currentPassengersTextField);
@@ -360,7 +372,7 @@ public class ControlPanelController {
     public void handleDestinationComboBoxForMilitaryAirplane() {
         clearNewEntityPropertiesVbox(2);
         amountOfStaffTextField = initializeAmountOfStaffTextField();
-        speedTextField = initializeSpeedTextField();
+        speedTextField = initializeSpeedTextField(1);
         addListnerToFieldsForMilitaryAirplane(amountOfStaffTextField);
         addListnerToFieldsForMilitaryAirplane(speedTextField);
         newEntityPropertiesVbox.getChildren().addAll(amountOfStaffTextField, speedTextField);
@@ -391,7 +403,7 @@ public class ControlPanelController {
 
     public void handleChooseTypeComboBoxForShips() {
         newEntityPropertiesVbox.getChildren().clear();
-        speedTextField = initializeSpeedTextField();
+        speedTextField = initializeSpeedTextField(2);
         if (newEntityChooseTypeComboBox.getValue().equals("Civilian")) {
             maxPassengersTextField = initializeMaxPassengersTextField();
             currentPassengersTextField = initializeCurrentPassengersTextField();
@@ -442,17 +454,28 @@ public class ControlPanelController {
         }
     }
 
+    public Boolean checkMaxAndCurrentPassengers(int maxPassengers, int currentPassengers){
+        if(currentPassengers>maxPassengers){
+            AlertBox.display("Current amount of passengers can't be greater than maximum");
+            return false;
+        }else{
+            return true;
+        }
+    }
+
     public void createCivilianAirplane(Airport destination, int amountOfStaff, double speed, double maxFuel, double currentFuel) {
         int maxPassengers = checkIntValue(maxPassengersTextField, "maximum amount of passengers");
         int currentPassengers = checkIntValue(currentPassengersTextField, "current amount of passengers");
         if (amountOfStaff != -1 && speed != -1 && maxPassengers != -1 && currentPassengers != -1) {
-            int id = entities.getNewId();
-            CivilianAirport creator = (CivilianAirport) startingLocationComboBox.getValue();
-            Airplane newAirplane = creator.createPlane(id, destination, amountOfStaff, maxPassengers, currentPassengers, speed, currentFuel, maxFuel);
-            entities.addAirplane(newAirplane);
-            addChild(civilianAirplanes, newAirplane);
-            newEntityVbox.setVisible(false);
-            mapController.refresh();
+            if (checkMaxAndCurrentPassengers(maxPassengers, currentPassengers)) {
+                int id = entities.getNewId();
+                CivilianAirport creator = (CivilianAirport) startingLocationComboBox.getValue();
+                Airplane newAirplane = creator.createPlane(id, destination, amountOfStaff, maxPassengers, currentPassengers, speed, currentFuel, maxFuel);
+                entities.addAirplane(newAirplane);
+                addChild(civilianAirplanes, newAirplane);
+                newEntityVbox.setVisible(false);
+                mapController.refresh();
+            }
         }
     }
 
@@ -475,29 +498,37 @@ public class ControlPanelController {
         }
     }
 
-    public void createCivilianShip(int x, int y, double speed) {
+    public void createCivilianShip(SeaPathNode shipsStartingLocationNode, double speed) {
+        double x = shipsStartingLocationNode.getNode().getX();
+        double y = shipsStartingLocationNode.getNode().getY();
         int maxPassengers = checkIntValue(maxPassengersTextField, "maximum amount of passengers");
         int currentPassengers = checkIntValue(currentPassengersTextField, "current amount of passengers");
         Companies company = chosenCompany;
         if (speed != -1 && maxPassengers != -1 && currentPassengers != -1) {
-            int id = entities.getNewId();
-            Ship newShip = new CivilianShip(x, y, id, speed, currentPassengers, maxPassengers, company);
-            entities.addShip(newShip);
-            addChild(civilianShips, newShip);
-            newEntityVbox.setVisible(false);
-            mapController.refresh();
+            if(checkMaxAndCurrentPassengers(maxPassengers,currentPassengers)) {
+                int id = entities.getNewId();
+                Ship newShip = new CivilianShip(x, y, id, speed, currentPassengers, maxPassengers, company, shipsStartingLocationNode, entities.getListOfSeaPathNodes());
+                entities.addShip(newShip);
+                addChild(civilianShips, newShip);
+                newEntityVbox.setVisible(false);
+                mapController.refresh();
+                newShip.run();
+            }
         }
     }
 
-    public void createMilitaryShip(int x, int y, double speed) {
+    public void createMilitaryShip(SeaPathNode shipsStartingLocationNode, double speed) {
+        double x = shipsStartingLocationNode.getNode().getX();
+        double y = shipsStartingLocationNode.getNode().getY();
         Weapons weapons = chosenWeapon;
         if (speed != -1) {
             int id = entities.getNewId();
-            Ship newShip = new MilitaryShip(x, y, id, speed, weapons);
+            Ship newShip = new MilitaryShip(x, y, id, speed, weapons, shipsStartingLocationNode, entities.getListOfSeaPathNodes());
             entities.addShip(newShip);
             addChild(militaryShips, newShip);
             newEntityVbox.setVisible(false);
             mapController.refresh();
+            newShip.run();
         }
     }
 
@@ -515,13 +546,11 @@ public class ControlPanelController {
             }
         } else {  //it equals "New Ship"
             Random random = new Random();
-            SeaPathNode shipsStartingLocation = entities.getSeaPathNodes().get(random.nextInt(entities.getSeaPathNodes().size()));
-            int x = shipsStartingLocation.getNode().getX();
-            int y = shipsStartingLocation.getNode().getY();
+            SeaPathNode shipsStartingLocationNode = entities.getListOfSeaPathNodes().get(random.nextInt(entities.getListOfSeaPathNodes().size()));
             if (newEntityChooseTypeComboBox.getValue().equals("Civilian")) {
-                createCivilianShip(x, y, speed);
+                createCivilianShip(shipsStartingLocationNode, speed);
             } else {   //it equals "Military"
-                createMilitaryShip(x, y, speed);
+                createMilitaryShip(shipsStartingLocationNode, speed);
             }
         }
     }
@@ -560,8 +589,6 @@ public class ControlPanelController {
         //test purposes
         entities.addAirplane(p1);
         entities.addAirplane(p2);
-        entities.addShip(s1);
-        entities.addShip(s2);
         mapController.refresh();
 
         buildTreeView();

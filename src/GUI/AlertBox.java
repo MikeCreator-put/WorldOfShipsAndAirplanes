@@ -9,9 +9,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
-
 public class AlertBox {
-    public static void display(String message){
+    public static void display(String message) {
         Stage thisStage = new Stage();
 
         thisStage.initModality(Modality.APPLICATION_MODAL);

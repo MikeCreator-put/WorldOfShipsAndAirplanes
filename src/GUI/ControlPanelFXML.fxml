@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="554.0" prefWidth="740.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="myPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="554.0" prefWidth="740.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <left>
         <VBox prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
@@ -81,7 +81,7 @@
                                 <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                             </HBox.margin>
                         </Line>
-                  <VBox prefHeight="478.0" prefWidth="263.0">
+                  <VBox prefHeight="478.0" prefWidth="263.0" HBox.hgrow="ALWAYS">
                      <children>
                         <StackPane prefHeight="150.0" prefWidth="200.0">
                            <children>

@@ -2,5 +2,7 @@ package enums;
 
 public enum ShipState {
     travelling,
-    arrived
+    arrived,
+    waiting,
+    leaving
 }

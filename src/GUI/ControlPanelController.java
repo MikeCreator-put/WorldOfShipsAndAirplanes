@@ -5,19 +5,26 @@ import airports.CivilianAirport;
 import airports.MilitaryAirport;
 import enums.Companies;
 import enums.Weapons;
+import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import others.Point;
 import others.SeaPathNode;
 import vehicles.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -26,19 +33,21 @@ public class ControlPanelController {
     private MapController mapController;
     private Entities entities;
 
-    public MapController getMapController(){
+    public MapController getMapController() {
         return mapController;
     }
 
     public ControlPanelController() {
         entities = new Entities();
         this.thisStage = new Stage();
-        this.entities = entities;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ControlPanelFXML.fxml"));
             loader.setController(this);
             thisStage.setScene(new Scene(loader.load()));
             thisStage.setTitle("Control Panel");
+            //thisStage.alwaysOnTop()
+            //thisStage.initModality(Modality.NONE);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,12 +63,11 @@ public class ControlPanelController {
 
 
     //for test purposes
-
-
     private final Airplane p1 = new CivilianAirplane(23, 23, 101, 15, 32.32, 32.32, null, 50, 12, 15);
     private final Airplane p2 = new MilitaryAirplane(51, 51, 102, 31, 99.99, 99.99, null, Weapons.NuclearWarhead, 99);
 
-
+    @FXML
+    BorderPane myPane;
     @FXML
     Button newAirplaneButton;
     @FXML
@@ -102,6 +110,7 @@ public class ControlPanelController {
     private final TreeItem<Point> civilianAirports = new TreeItem<>(new Point("Civilian Airports"));
     private final TreeItem<Point> militaryShips = new TreeItem<>(new Point("Military Ships"));
     private final TreeItem<Point> civilianShips = new TreeItem<>(new Point("Civilian Ships"));
+    private List<TreeItem<Point>> itemsList = new ArrayList<>();
     private Point selectedVehicle = null;
 
 
@@ -109,12 +118,14 @@ public class ControlPanelController {
         for (T child : listOfChildren) {
             TreeItem<Point> treeItem = (TreeItem<Point>) new TreeItem<>(child);
             parent.getChildren().add(treeItem);
+            itemsList.add(treeItem);
         }
     }
 
     private <T> void addChild(TreeItem<Point> parent, T child) {
         TreeItem<Point> treeItem = (TreeItem<Point>) new TreeItem<>(child);
         parent.getChildren().add(treeItem);
+        itemsList.add(treeItem);
     }
 
     @FXML
@@ -137,6 +148,7 @@ public class ControlPanelController {
 
     public void setInformationsLabel(Point item) {
         if (item instanceof Vehicle || item instanceof Airport) {
+            informationsLabel.setVisible(true);
             informationsLabel.setText(item.getInfo());
             if (item instanceof Vehicle) {
                 selectedVehicle = item;
@@ -157,24 +169,35 @@ public class ControlPanelController {
     private void handleTreeClicks() {
         myTreeView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
             setInformationsLabel(newValue.getValue());
-            newValue.getValue().xProperty().addListener((((observable1, oldValue1, newValue1) -> {
-                setInformationsLabel(newValue.getValue());
-            })));
+//            newValue.getValue().xProperty().addListener((((observable1, oldValue1, newValue1) -> {
+//                setInformationsLabel(newValue.getValue());
+//            })));
         }));
     }
 
 
     public void deleteEntityButtonClicked() {
         if (selectedVehicle != null) {
+            //TODO shutting down the thread
             if (selectedVehicle instanceof Ship) {
+                ((Ship)selectedVehicle).stop();
                 entities.removeShip((Ship) selectedVehicle);
             }
             if (selectedVehicle instanceof Airplane) {
                 entities.removeAirplane((Airplane) selectedVehicle);
             }
-            TreeItem<Point> c = myTreeView.getSelectionModel().getSelectedItem();
-            c.getParent().getChildren().remove(c);
+            TreeItem<Point> c = new TreeItem<>(selectedVehicle);
+            for(TreeItem<Point> item : itemsList){
+                if(c.getValue().equals(item.getValue())){
+                    item.getParent().getChildren().remove(item);
+                    itemsList.remove(item);
+                }
+            }
+
+            selectedVehicle = null;
             mapController.refresh();
+            informationsLabel.setVisible(false);
+            deleteEntityButton.setVisible(false);
         }
     }
 
@@ -249,9 +272,9 @@ public class ControlPanelController {
     public TextField initializeSpeedTextField(int flag) { //flag == 1 - civilian, else - military
         speedTextField = new TextField();
         speedTextField.setMaxWidth(MAXWIDTH);
-        if(flag == 1) {
+        if (flag == 1) {
             speedTextField.setPromptText("Set airplane's speed (double)");
-        }else{
+        } else {
             speedTextField.setPromptText("Set ship's speed (double)");
         }
         return speedTextField;
@@ -454,11 +477,11 @@ public class ControlPanelController {
         }
     }
 
-    public Boolean checkMaxAndCurrentPassengers(int maxPassengers, int currentPassengers){
-        if(currentPassengers>maxPassengers){
+    public Boolean checkMaxAndCurrentPassengers(int maxPassengers, int currentPassengers) {
+        if (currentPassengers > maxPassengers) {
             AlertBox.display("Current amount of passengers can't be greater than maximum");
             return false;
-        }else{
+        } else {
             return true;
         }
     }
@@ -505,14 +528,14 @@ public class ControlPanelController {
         int currentPassengers = checkIntValue(currentPassengersTextField, "current amount of passengers");
         Companies company = chosenCompany;
         if (speed != -1 && maxPassengers != -1 && currentPassengers != -1) {
-            if(checkMaxAndCurrentPassengers(maxPassengers,currentPassengers)) {
+            if (checkMaxAndCurrentPassengers(maxPassengers, currentPassengers)) {
                 int id = entities.getNewId();
-                Ship newShip = new CivilianShip(x, y, id, speed, currentPassengers, maxPassengers, company, shipsStartingLocationNode, entities.getListOfSeaPathNodes());
+                Ship newShip = new CivilianShip(x, y, id, speed, currentPassengers, maxPassengers, company, shipsStartingLocationNode, entities.getListOfSeaPathNodes(), getMapController());
                 entities.addShip(newShip);
                 addChild(civilianShips, newShip);
                 newEntityVbox.setVisible(false);
                 mapController.refresh();
-                newShip.run();
+                newShip.start();
             }
         }
     }
@@ -523,12 +546,12 @@ public class ControlPanelController {
         Weapons weapons = chosenWeapon;
         if (speed != -1) {
             int id = entities.getNewId();
-            Ship newShip = new MilitaryShip(x, y, id, speed, weapons, shipsStartingLocationNode, entities.getListOfSeaPathNodes());
+            Ship newShip = new MilitaryShip(x, y, id, speed, weapons, shipsStartingLocationNode, entities.getListOfSeaPathNodes(), getMapController());
             entities.addShip(newShip);
             addChild(militaryShips, newShip);
             newEntityVbox.setVisible(false);
             mapController.refresh();
-            newShip.run();
+            newShip.start();
         }
     }
 
@@ -565,10 +588,13 @@ public class ControlPanelController {
         line.setEndY(0);
     }
 
+    public void showMyPane(){
+        thisStage.show();
+    }
+
     public Entities getEntities() {
         return this.entities;
     }
-
 
     @FXML
     public void initialize() {
@@ -581,16 +607,22 @@ public class ControlPanelController {
         viewMapButton.setOnAction(event -> viewMapButtonClicked());
         cancelButton.setOnAction(event -> cancelButtonClicked());
 
+
         newEntityVbox.setVisible(false);
         deleteEntityButton.setVisible(false);
         callEmergencyButton.setVisible(false);
         changeRouteButton.setVisible(false);
 
         //test purposes
+//        Ship s1 = new MilitaryShip(300,300,1,100,Weapons.NuclearWarhead,entities.getListOfSeaPathNodes().get(0), entities.getListOfSeaPathNodes());
+//        Ship s2 = new MilitaryShip(300, 400, 2, 100, Weapons.BrowningGun, entities.getListOfSeaPathNodes().get(1), entities.getListOfSeaPathNodes());
+
         entities.addAirplane(p1);
         entities.addAirplane(p2);
-        mapController.refresh();
 
+        mapController.refresh();
+//        s1.run();
+//        s2.run();
         buildTreeView();
     }
 }

@@ -1,7 +1,6 @@
 package airports;
 
 import enums.Weapons;
-import jdk.jfr.Percentage;
 import vehicles.Airplane;
 import vehicles.MilitaryAirplane;
 

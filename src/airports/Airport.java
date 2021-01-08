@@ -3,7 +3,6 @@ package airports;
 import vehicles.Airplane;
 import others.Point;
 
-import java.awt.geom.Arc2D;
 import java.util.List;
 
 
@@ -29,16 +28,16 @@ public abstract class Airport extends Point {
                 "\nAirplanes in: " + this.getAirplanesIn();
     }
 
-    public void addAirplaneToAirplanesIn(Airplane airplane){
-        if(currentCapacity <= maxCapacity){
+    public void addAirplaneToAirplanesIn(Airplane airplane) {
+        if (currentCapacity <= maxCapacity) {
             airplanesIn.add(airplane);
             currentCapacity += 1;
         }
         // TODO airplane.waitToBeletIn???
     }
 
-    public void removeAirplaneFromAirplanesIn(Airplane airplane){
-        currentCapacity-=1;
+    public void removeAirplaneFromAirplanesIn(Airplane airplane) {
+        currentCapacity -= 1;
         airplanesIn.remove(airplane);
     }
 

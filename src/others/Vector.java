@@ -5,33 +5,33 @@ public class Vector {
     private double y;
     private double magnitude;
 
-    public Vector(double x, double y){
+    public Vector(double x, double y) {
         this.x = x;
         this.y = y;
-        this.magnitude = Math.sqrt(x*x +y*y);
+        this.magnitude = Math.sqrt(x * x + y * y);
     }
 
-    public Vector(Vector vector){
+    public Vector(Vector vector) {
         this.x = vector.getX();
         this.y = vector.getY();
         this.magnitude = vector.getMagnitude();
     }
 
-    public void recalculateMagnitude(){
-        magnitude = Math.sqrt(x*x + y*y);
+    public void recalculateMagnitude() {
+        magnitude = Math.sqrt(x * x + y * y);
     }
 
-    public void mult(double n){
+    public void mult(double n) {
         x = x * n;
         y = y * n;
     }
 
-    public void div(double n){
+    public void div(double n) {
         x = x / n;
         y = y / n;
     }
 
-    public void normalize(){
+    public void normalize() {
         x = x / magnitude;
         y = y / magnitude;
     }

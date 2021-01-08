@@ -1,5 +1,6 @@
 package vehicles;
 
+import GUI.MapController;
 import enums.Companies;
 import others.SeaPathNode;
 
@@ -10,8 +11,8 @@ public class CivilianShip extends Ship {
     private int maxPassengers;
     private Companies company;
 
-    public CivilianShip(double x, double y, int id, double maxSpeed, int currentPassengers, int maxPassengers, Companies company, SeaPathNode startingLocationNode, List<SeaPathNode> listOfSeaPathNodes) {
-        super(x, y, id, maxSpeed, startingLocationNode, listOfSeaPathNodes);
+    public CivilianShip(double x, double y, int id, double maxSpeed, int currentPassengers, int maxPassengers, Companies company, SeaPathNode startingLocationNode, List<SeaPathNode> listOfSeaPathNodes, MapController mapController) {
+        super(x, y, id, maxSpeed, startingLocationNode, listOfSeaPathNodes, mapController);
         this.currentPassengers = currentPassengers;
         this.maxPassengers = maxPassengers;
         this.company = company;

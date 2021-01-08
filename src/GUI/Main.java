@@ -1,10 +1,13 @@
 package GUI;
 
+import enums.Weapons;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import others.Point;
+import vehicles.MilitaryShip;
 import vehicles.Ship;
 
 public class Main extends Application {
@@ -14,13 +17,29 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+
+
         controlPanelController = new ControlPanelController();
+
         controlPanelController.showStage();
         Stage mystage1 = controlPanelController.getStage();
+
+
+        mystage1.setOnCloseRequest(event -> {
+            Platform.exit();
+        });
 
         mystage1.heightProperty().addListener(((observable, oldValue, newValue) -> {
             controlPanelController.resizeLine((double) newValue - (double) oldValue);
         }));
+
+        AnimationTimer animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                controlPanelController.getMapController().refresh();
+            }
+        };
+        animationTimer.start();
     }
 
 

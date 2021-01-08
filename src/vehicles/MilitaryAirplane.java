@@ -1,9 +1,6 @@
 package vehicles;
 
 import airports.Airport;
-
-import java.util.List;
-
 import enums.Weapons;
 
 public class MilitaryAirplane extends Airplane {

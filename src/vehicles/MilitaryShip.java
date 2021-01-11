@@ -10,8 +10,8 @@ import java.util.List;
 public class MilitaryShip extends Ship {
     private Weapons weapons;
 
-    public MilitaryShip(double x, double y, int id, double maxSpeed, Weapons weapons, SeaPathNode startingLocationNode, List<SeaPathNode> listOfSeaPathNodes, MapController mapController) {
-        super(x, y, id, maxSpeed, startingLocationNode, listOfSeaPathNodes, mapController);
+    public MilitaryShip(double x, double y, int id, double maxSpeed, Weapons weapons, SeaPathNode startingLocationNode) {
+        super(x, y, id, maxSpeed, startingLocationNode);
         this.weapons = weapons;
     }
 

@@ -2,11 +2,7 @@ package GUI;
 
 import airports.Airport;
 import airports.CivilianAirport;
-import airports.MilitaryAirport;
-import enums.Weapons;
-import others.Point;
-import others.SeaPathNode;
-import others.SeaPathsGraph;
+import others.*;
 import vehicles.*;
 
 import java.util.ArrayList;
@@ -14,28 +10,12 @@ import java.util.List;
 
 public class Entities {
 
-    public Entities() {
-        SeaPathsGraph seaPathsGraph = new SeaPathsGraph();
-        this.listOfSeaPathNodes =seaPathsGraph.getListOfNodes();
-//        Ship s1 = new MilitaryShip(listOfSeaPathNodes.get(0).getNode().getX(),listOfSeaPathNodes.get(0).getNode().getY(),1,100, Weapons.NuclearWarhead, listOfSeaPathNodes.get(0), listOfSeaPathNodes);
-//        Ship s2 = new MilitaryShip(listOfSeaPathNodes.get(1).getNode().getX(),listOfSeaPathNodes.get(1).getNode().getY(), 2, 100, Weapons.BrowningGun, listOfSeaPathNodes.get(1), listOfSeaPathNodes);
-//        addShip(s1);
-//        addShip(s2);
-//        s1.run();
-//        s2.run();
 
-        // initialize airports
-        Airport tokyo = new CivilianAirport(811, 153, "Tokyo", 54, new ArrayList<>());
-        Airport mexico = new CivilianAirport(111, 213, "Mexico City", 35, new ArrayList<>());
-        Airport atlanta = new CivilianAirport(160, 160, "Atlanta", 78, new ArrayList<>());
-        Airport buenos_aires = new CivilianAirport(239, 403, "Buenos Aires", 44, new ArrayList<>());
-        Airport paris = new CivilianAirport(419, 109, "Paris", 38, new ArrayList<>());
-        Airport dubai = new CivilianAirport(573, 193, "Dubai", 66, new ArrayList<>());
-        Airport melbourne = new CivilianAirport(824, 412, "Melbourne", 23, new ArrayList<>());
-        Airport cape_town = new MilitaryAirport(463, 396, "Cape Town", 11, new ArrayList<>());
-        Airport sao_louis = new MilitaryAirport(257, 285, "Sao Louis", 10, new ArrayList<>());
-        Airport moscow = new MilitaryAirport(524, 88, "Moscow", 31, new ArrayList<>());
-        setListOfAirports(new ArrayList<>(List.of(tokyo, mexico, atlanta, buenos_aires, paris, dubai, melbourne, cape_town, sao_louis, moscow)));
+    public Entities(AirPathsGraph airPathsGraph) {
+        SeaPathsGraph seaPathsGraph = new SeaPathsGraph();
+        this.listOfSeaPathNodes = seaPathsGraph.getListOfNodes();
+        this.airPathsGraph = airPathsGraph;
+        setListOfAirports(airPathsGraph.getListOfAirports());
     }
 
     private List<Airport> listOfAirports = new ArrayList<>();
@@ -52,13 +32,17 @@ public class Entities {
 
 
     private List<SeaPathNode> listOfSeaPathNodes;
-
+    private AirPathsGraph airPathsGraph;
 
     private int id = 0;
 
     public int getNewId() {
         id += 1;
         return id;
+    }
+
+    public AirPathsGraph getAirPathsGraph(){
+        return airPathsGraph;
     }
 
     public void addAirport(Airport airport) {

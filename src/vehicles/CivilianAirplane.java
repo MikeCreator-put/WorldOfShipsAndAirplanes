@@ -2,7 +2,6 @@ package vehicles;
 
 import airports.Airport;
 
-import java.util.List;
 
 public class CivilianAirplane extends Airplane {
     private int maxPassengers;

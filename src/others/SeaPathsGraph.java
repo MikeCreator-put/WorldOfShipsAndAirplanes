@@ -9,32 +9,6 @@ public class SeaPathsGraph {
         setNodes();
     }
 
-    //testing semaphores
-//    private final Point seaNode1 = new Point(300,300);
-//    private final Point seaNode2 = new Point(300, 400);
-//    private final Point seaNode3 = new Point(400,300);
-//    private final Point seaNode4 = new Point(400, 400);
-//    private final Point seaNode5 = new Point(350, 350);
-//
-//    private final SeaPathNode seaPathNode1 = new SeaPathNode(seaNode1);
-//    private final SeaPathNode seaPathNode2 = new SeaPathNode(seaNode2);
-//    private final SeaPathNode seaPathNode3 = new SeaPathNode(seaNode3);
-//    private final SeaPathNode seaPathNode4 = new SeaPathNode(seaNode4);
-//    private final SeaPathNode seaPathNode5 = new SeaPathNode(seaNode5);
-//
-//    public void setNodes() {
-//        seaPathNode1.setConnections(new ArrayList<>(List.of(seaPathNode3, seaPathNode5)));
-//        seaPathNode2.setConnections(new ArrayList<>(List.of(seaPathNode4, seaPathNode5)));
-//        seaPathNode3.setConnections(new ArrayList<>(List.of(seaPathNode1, seaPathNode5)));
-//        seaPathNode4.setConnections(new ArrayList<>(List.of(seaPathNode2, seaPathNode5)));
-//        seaPathNode5.setConnections(new ArrayList<>(List.of(seaPathNode1, seaPathNode2, seaPathNode3, seaPathNode4)));
-//    }
-//
-//    public List<SeaPathNode> getListOfNodes(){
-//        return new ArrayList<>(List.of(seaPathNode1, seaPathNode2, seaPathNode3, seaPathNode4, seaPathNode5));
-//    }
-
-
     private final SeaPathNode seaPathNode1 = new SeaPathNode(new Point(714, 396),1000);
     private final SeaPathNode seaPathNode2 = new SeaPathNode(new Point(646, 338), 1000);
     private final SeaPathNode seaPathNode3 = new SeaPathNode(new Point(680, 282), 1000);
@@ -71,6 +45,4 @@ public class SeaPathsGraph {
     public List<SeaPathNode> getListOfNodes(){
         return new ArrayList<>(List.of(seaPathNode1, seaPathNode2, seaPathNode3, seaPathNode4, seaPathNode5, seaPathNode6, seaPathNode7, seaPathNode8, seaPathNode9, seaPathNode10, seaPathNode11, seaPathNode12, seaPathNode13, seaPathNode14, seaPathNode15));
     }
-
-
 }

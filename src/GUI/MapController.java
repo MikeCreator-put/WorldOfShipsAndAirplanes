@@ -1,13 +1,9 @@
 package GUI;
 
-import javafx.application.Platform;
-import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.stage.Modality;
 import others.Point;
 import airports.Airport;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,33 +21,66 @@ import java.util.List;
 public class MapController {
     private final Stage thisStage = new Stage();
     private Pane root = new Pane();
-    private Scene scene = new Scene(root);
+    private final Scene scene = new Scene(root);
     private final ControlPanelController controlPanelController;
 
     public MapController(ControlPanelController controlPanelController) {
         this.controlPanelController = controlPanelController;
+        root.setOnMouseClicked(event -> {
+            double clickedX = event.getSceneX();
+            double clickedY = event.getSceneY();
+            if(!checkForAirports(clickedX, clickedY)){
+                checkForShips(clickedX, clickedY);
+                checkForAirplanes(clickedX, clickedY);
+            }
+
+        });
         thisStage.setScene(scene);
         refresh();
         thisStage.setTitle("Map");
     }
 
-
-    public void refresh() {
-        scene.setRoot(createContent());
-        //thisStage.setScene(new Scene(createContent()));
-
+    public void checkForAirplanes(double x, double y){
+        for(Airplane airplane : controlPanelController.getEntities().getListofAirplanes()){
+            if(airplane.getX()-5 <= x && x <= airplane.getX()+5 && airplane.getY()-5 <= y && y <= airplane.getY()+5){
+                controlPanelController.setInformationsLabel(airplane);
+            }
+        }
     }
 
+    public void checkForShips(double x, double y){
+        for(Ship ship : controlPanelController.getEntities().getListOfShips()){
+            if(ship.getX()-5 <= x && x <= ship.getX()+5 && ship.getY()-5 <= y && y <= ship.getY()+5){
+                controlPanelController.setInformationsLabel(ship);
+            }
+        }
+    }
+
+    public Boolean checkForAirports(double x, double y){
+        for(Airport airport : controlPanelController.getEntities().getListOfAirports()){
+            if(airport.getX()-5 <= x && x <= airport.getX()+5 && airport.getY()-5 <= y && y <= airport.getY()+5){
+                controlPanelController.setInformationsLabel(airport);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void refresh() {
+        createContent();
+        if(controlPanelController.getInformationsLabelItem()!=null){
+            controlPanelController.setInformationsLabel(controlPanelController.getInformationsLabelItem());
+        }
+    }
 
     public void showStage() {
         thisStage.setResizable(false);
         thisStage.show();
-        //thisStage.initModality(Modality.NONE);
     }
 
-    private Parent createContent() {
+    private void createContent() {
 
-        root = new Pane();
+        root.getChildren().clear();
         root.setPrefSize(1005.0, 500.0);
         ImageView map = new ImageView(new Image("map.png"));
         ImageView legend = new ImageView(new Image("mapLegend.png"));
@@ -65,6 +94,7 @@ public class MapController {
         try {
             drawSeaNodes(entities.getListOfSeaPathNodes(), Color.AQUAMARINE);
             drawSeaPaths(entities, 0.5, 0.5, Color.AQUAMARINE);
+            drawAirPaths(entities, 0.5, 0.5, Color.GRAY);
             drawAirports(entities.getListOfCivilianAirports(), Color.BLUE);
             drawAirports(entities.getListOfMilitaryAirports(), Color.RED);
             drawAirplanes(entities.getListofCivilianAirplanes(), Color.BLUE);
@@ -75,22 +105,17 @@ public class MapController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return root;
     }
 
     private <T> void drawAirports(List<T> airports, Color color) {
         for (T airport : airports) {
             MapAirport mapAirport = new MapAirport(10, 10, color, (Airport) airport);
             root.getChildren().add(mapAirport);
-            mapAirport.setOnMouseClicked(event -> controlPanelController.setInformationsLabel((Point) airport));
-            Tooltip tooltip = new Tooltip(((Airport) airport).getInfo());
-            Tooltip.install(mapAirport, tooltip);
         }
     }
 
     private static class MapAirport extends Rectangle {
         Airport airport;
-
         MapAirport(int width, int height, Color color, Airport airport) {
             super(width, height, color);
             this.airport = airport;
@@ -104,10 +129,8 @@ public class MapController {
     private <T> void drawAirplanes(List<T> airplanes, Color color) {
         for (T airplane : airplanes) {
             MapAirplane mapAirplane = new MapAirplane(5, color, (Airplane) airplane);
-            root.getChildren().add(mapAirplane);
             mapAirplane.setOnMouseClicked(event -> controlPanelController.setInformationsLabel((Point) airplane));
-            Tooltip tooltip = new Tooltip(((Airplane) airplane).getInfo());
-            Tooltip.install(mapAirplane, tooltip);
+            root.getChildren().add(mapAirplane);
         }
     }
 
@@ -116,11 +139,25 @@ public class MapController {
 
         MapAirplane(int radius, Color color, Airplane airplane) {
             super(airplane.getX(),airplane.getY(),radius);
-            //this.centerXProperty().bind(airplane.xProperty());
-            //this.centerYProperty().bind(airplane.yProperty());
             this.setRadius(radius);
             this.airplane = airplane;
             this.setFill(color);
+        }
+    }
+
+    private void drawAirPaths(Entities entities, double opacity, double strokeWidth, Color color) {
+        for(Airport start : entities.getAirPathsGraph().getAdjList().keySet()){
+            double startX = start.getX();
+            double startY = start.getY();
+            for(Airport dest : entities.getAirPathsGraph().getAdjList().get(start)){
+                double endX = dest.getX();
+                double endY = dest.getY();
+                Line airPath = new Line(startX,startY, endX, endY);
+                airPath.setOpacity(opacity);
+                airPath.setStrokeWidth(strokeWidth);
+                airPath.setStroke(color);
+                root.getChildren().add(airPath);
+            }
         }
     }
 
@@ -131,11 +168,7 @@ public class MapController {
                 double startY = startSeaPathNode.getNode().getY();
                 double endX = endPoint.getNode().getX();
                 double endY = endPoint.getNode().getY();
-                Line seaPath = new Line();
-                seaPath.setStartX(startX);
-                seaPath.setStartY(startY);
-                seaPath.setEndX(endX);
-                seaPath.setEndY(endY);
+                Line seaPath = new Line(startX, startY, endX, endY);
                 seaPath.setOpacity(opacity);
                 seaPath.setStrokeWidth(strokeWidth);
                 seaPath.setStroke(color);
@@ -166,9 +199,6 @@ public class MapController {
         for (T ship : ships) {
             MapShip mapShip = new MapShip(5, color, (Ship) ship);
             root.getChildren().add(mapShip);
-            mapShip.setOnMouseClicked(event -> controlPanelController.setInformationsLabel((Point) ship));
-            Tooltip tooltip = new Tooltip(((Ship) ship).getInfo());
-            Tooltip.install(mapShip, tooltip);
         }
     }
 
@@ -177,9 +207,6 @@ public class MapController {
 
         MapShip(int radius, Color color, Ship ship) {
             super(ship.getX(),ship.getY(),radius);
-            //this.centerXProperty().bind(ship.xProperty());
-            //this.centerYProperty().bind(ship.yProperty());
-            //this.setRadius(radius);
             this.ship = ship;
             this.setFill(color);
         }

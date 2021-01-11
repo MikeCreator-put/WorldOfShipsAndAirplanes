@@ -1,7 +1,6 @@
 package vehicles;
 
 import others.Point;
-import others.Vector;
 
 public abstract class Vehicle extends Point implements Runnable {
 
@@ -12,11 +11,7 @@ public abstract class Vehicle extends Point implements Runnable {
         return timeframe;
     }
 
-    public void setTimeframe(double timeframe) {
-        this.timeframe = timeframe;
-    }
-
-    private double timeframe = 0.005;
+    private final double timeframe = 0.005;
 
     @Override
     public String getInfo() {

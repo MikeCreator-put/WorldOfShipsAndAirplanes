@@ -16,7 +16,6 @@ public abstract class Ship extends Vehicle {
     private SeaPathNode currentLocation;
     private SeaPathNode destination;
     private SeaPathNode previousLocation = new SeaPathNode(new Point(0, 0), 1);
-    private List<SeaPathNode> listOfSeaPathNodes;
 
     public ShipState getState() {
         return state;
@@ -27,16 +26,12 @@ public abstract class Ship extends Vehicle {
     }
 
     private ShipState state = ShipState.arrived;
-    private MapController mapController;
 
 
-    public Ship(double x, double y, int id, double maxSpeed, SeaPathNode startingLocationNode, List<SeaPathNode> listOfSeaPathNodes, MapController mapController) {
+    public Ship(double x, double y, int id, double maxSpeed, SeaPathNode startingLocationNode) {
         super(x, y, id, maxSpeed);
         this.currentLocation = startingLocationNode;
         this.destination = getDestination(currentLocation);
-        this.listOfSeaPathNodes = listOfSeaPathNodes;
-        this.mapController = mapController;
-
     }
 
     private int waitCounter = 100;
@@ -102,50 +97,12 @@ public abstract class Ship extends Vehicle {
         running.set(false);
     }
 
-//    @Override
-//    public void run() {
-//        running.set(true);
-//        while (running.get()) {
-//                AnimationTimer animationTimer = new AnimationTimer() {
-//                    @Override
-//                    public void handle(long now) {
-//                        switch (getState()) {
-//                            case travelling -> {
-//                                Boolean arrived = moveToSeaNode(getTimeFrame(), destination, 3);
-//                                if (arrived) {
-//                                    previousLocation = currentLocation;
-//                                    currentLocation = destination;
-//                                    destination = getDestination(currentLocation);
-//                                    setState(ShipState.waiting);
-//                                }
-//                            }
-//                            case waiting -> {
-//                                if (currentLocation.getAvailable().tryAcquire()) {
-//                                    moveToSeaNode(getTimeFrame(), currentLocation, 0);
-//                                    setState(ShipState.arrived);
-//                                }
-//                            }
-//                            case arrived -> {
-//                                Boolean occupying = occupyCrossing(currentLocation);
-//                                if (!occupying) {
-//                                    setState(ShipState.travelling);
-//                                }
-//                            }
-//                        }
-//                    }
-//                };
-//                animationTimer.start();
-//            }
-//
-//
     @Override
     public void run() {
         for (;;) {
-            System.out.println("running");
-            // 1: mapController.refresh();
-            // 2: Platform.runLater(() -> mapController.refresh());
+            //System.out.println("running");
             if(!running.get()){
-                System.out.println("here");
+                System.out.println("thread stopped");
                 break;
             }
             switch (getState()) {

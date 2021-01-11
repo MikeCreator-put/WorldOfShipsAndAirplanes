@@ -1,12 +1,7 @@
 package others;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-
 public class Point {
     private String name;
-    //private DoubleProperty x = new SimpleDoubleProperty(this, "x");
-    //private DoubleProperty y = new SimpleDoubleProperty(this, "y");
     private double x;
     private double y;
 
@@ -36,8 +31,6 @@ public class Point {
     }
 
     public Point(double x, double y) {
-        //this.setX(x);
-        //this.setY(y);
         this.x = x;
         this.y = y;
     }
@@ -54,27 +47,13 @@ public class Point {
         this.name = name;
     }
 
-//    public double getX() {
-//        return x.get();
-//    }
-
-//    public DoubleProperty xProperty() {
-//        return x;
-//    }
-//
-//    public void setX(double x) {
-//        this.x.set(x);
-//    }
-//
-//    public double getY() {
-//        return y.get();
-//    }
-//
-//    public DoubleProperty yProperty() {
-//        return y;
-//    }
-//
-//    public void setY(double y) {
-//        this.y.set(y);
-//    }
+    public int distanceTo(Point p){
+        double x1 = this.x;
+        double y1 = this.y;
+        double x2 = p.x;
+        double y2 = p.y;
+        double distance;
+        distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+        return (int)distance;
+    }
 }

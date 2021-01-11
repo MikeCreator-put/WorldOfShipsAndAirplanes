@@ -1,14 +1,12 @@
 package GUI;
 
-import enums.Weapons;
-import javafx.animation.Animation;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import others.Point;
-import vehicles.MilitaryShip;
-import vehicles.Ship;
+
+
 
 public class Main extends Application {
     ControlPanelController controlPanelController;
@@ -16,9 +14,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
-
-
         controlPanelController = new ControlPanelController();
 
         controlPanelController.showStage();
@@ -40,6 +35,7 @@ public class Main extends Application {
             }
         };
         animationTimer.start();
+
     }
 
 

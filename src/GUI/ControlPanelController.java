@@ -5,26 +5,22 @@ import airports.CivilianAirport;
 import airports.MilitaryAirport;
 import enums.Companies;
 import enums.Weapons;
-import javafx.application.Platform;
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import others.AirPathsGraph;
 import others.Point;
 import others.SeaPathNode;
 import vehicles.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Random;
 
@@ -38,16 +34,13 @@ public class ControlPanelController {
     }
 
     public ControlPanelController() {
-        entities = new Entities();
+        entities = new Entities(new AirPathsGraph());
         this.thisStage = new Stage();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ControlPanelFXML.fxml"));
             loader.setController(this);
             thisStage.setScene(new Scene(loader.load()));
             thisStage.setTitle("Control Panel");
-            //thisStage.alwaysOnTop()
-            //thisStage.initModality(Modality.NONE);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,13 +54,10 @@ public class ControlPanelController {
         thisStage.show();
     }
 
-
     //for test purposes
     private final Airplane p1 = new CivilianAirplane(23, 23, 101, 15, 32.32, 32.32, null, 50, 12, 15);
     private final Airplane p2 = new MilitaryAirplane(51, 51, 102, 31, 99.99, 99.99, null, Weapons.NuclearWarhead, 99);
 
-    @FXML
-    BorderPane myPane;
     @FXML
     Button newAirplaneButton;
     @FXML
@@ -92,11 +82,14 @@ public class ControlPanelController {
     Button cancelButton;
     @FXML
     Label informationsLabel;
+    Point informationsLabelItem = null;
+    public Point getInformationsLabelItem(){
+        return informationsLabelItem;
+    }
     @FXML
     Line line;
     @FXML
     StackPane stackPaneForChooseTypeComboBox;
-
 
     @FXML
     TreeView<Point> myTreeView;
@@ -150,6 +143,7 @@ public class ControlPanelController {
         if (item instanceof Vehicle || item instanceof Airport) {
             informationsLabel.setVisible(true);
             informationsLabel.setText(item.getInfo());
+            informationsLabelItem = item;
             if (item instanceof Vehicle) {
                 selectedVehicle = item;
                 deleteEntityButton.setVisible(true);
@@ -159,6 +153,7 @@ public class ControlPanelController {
                 }
             }
         } else {
+            informationsLabelItem = null;
             informationsLabel.setText("Here you'll see informations about chosen entity");
             deleteEntityButton.setVisible(false);
             changeRouteButton.setVisible(false);
@@ -178,22 +173,22 @@ public class ControlPanelController {
 
     public void deleteEntityButtonClicked() {
         if (selectedVehicle != null) {
-            //TODO shutting down the thread
             if (selectedVehicle instanceof Ship) {
                 ((Ship)selectedVehicle).stop();
                 entities.removeShip((Ship) selectedVehicle);
             }
             if (selectedVehicle instanceof Airplane) {
+                // TODO airplane.stop
                 entities.removeAirplane((Airplane) selectedVehicle);
             }
             TreeItem<Point> c = new TreeItem<>(selectedVehicle);
-            for(TreeItem<Point> item : itemsList){
-                if(c.getValue().equals(item.getValue())){
-                    item.getParent().getChildren().remove(item);
-                    itemsList.remove(item);
-                }
-            }
-
+            try {
+                for(TreeItem<Point> item : itemsList){
+                    if(c.getValue().equals(item.getValue())){
+                        item.getParent().getChildren().remove(item);
+                        itemsList.remove(item);
+                    }
+            }}catch(ConcurrentModificationException ignored){}
             selectedVehicle = null;
             mapController.refresh();
             informationsLabel.setVisible(false);
@@ -493,6 +488,12 @@ public class ControlPanelController {
             if (checkMaxAndCurrentPassengers(maxPassengers, currentPassengers)) {
                 int id = entities.getNewId();
                 CivilianAirport creator = (CivilianAirport) startingLocationComboBox.getValue();
+                //search
+                List<Airport> path = entities.getAirPathsGraph().getPathDijkstra(creator, destination);
+                System.out.println(path);
+//                System.out.println(creator);
+//                System.out.println(destination);
+//                System.out.println(path);
                 Airplane newAirplane = creator.createPlane(id, destination, amountOfStaff, maxPassengers, currentPassengers, speed, currentFuel, maxFuel);
                 entities.addAirplane(newAirplane);
                 addChild(civilianAirplanes, newAirplane);
@@ -530,7 +531,7 @@ public class ControlPanelController {
         if (speed != -1 && maxPassengers != -1 && currentPassengers != -1) {
             if (checkMaxAndCurrentPassengers(maxPassengers, currentPassengers)) {
                 int id = entities.getNewId();
-                Ship newShip = new CivilianShip(x, y, id, speed, currentPassengers, maxPassengers, company, shipsStartingLocationNode, entities.getListOfSeaPathNodes(), getMapController());
+                Ship newShip = new CivilianShip(x, y, id, speed, currentPassengers, maxPassengers, company, shipsStartingLocationNode);
                 entities.addShip(newShip);
                 addChild(civilianShips, newShip);
                 newEntityVbox.setVisible(false);
@@ -546,7 +547,7 @@ public class ControlPanelController {
         Weapons weapons = chosenWeapon;
         if (speed != -1) {
             int id = entities.getNewId();
-            Ship newShip = new MilitaryShip(x, y, id, speed, weapons, shipsStartingLocationNode, entities.getListOfSeaPathNodes(), getMapController());
+            Ship newShip = new MilitaryShip(x, y, id, speed, weapons, shipsStartingLocationNode);
             entities.addShip(newShip);
             addChild(militaryShips, newShip);
             newEntityVbox.setVisible(false);
@@ -614,15 +615,11 @@ public class ControlPanelController {
         changeRouteButton.setVisible(false);
 
         //test purposes
-//        Ship s1 = new MilitaryShip(300,300,1,100,Weapons.NuclearWarhead,entities.getListOfSeaPathNodes().get(0), entities.getListOfSeaPathNodes());
-//        Ship s2 = new MilitaryShip(300, 400, 2, 100, Weapons.BrowningGun, entities.getListOfSeaPathNodes().get(1), entities.getListOfSeaPathNodes());
 
         entities.addAirplane(p1);
         entities.addAirplane(p2);
 
         mapController.refresh();
-//        s1.run();
-//        s2.run();
         buildTreeView();
     }
 }

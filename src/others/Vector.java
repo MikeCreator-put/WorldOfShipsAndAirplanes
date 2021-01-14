@@ -18,7 +18,7 @@ public class Vector {
     }
 
     public void recalculateMagnitude() {
-        magnitude = Math.sqrt(x * x + y * y);
+        magnitude = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
     }
 
     public void mult(double n) {

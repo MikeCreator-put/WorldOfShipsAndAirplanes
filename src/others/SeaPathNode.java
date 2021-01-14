@@ -9,11 +9,9 @@ public class SeaPathNode {
     private List<SeaPathNode> connections;
 
     private final Semaphore available;
-    protected   Boolean used;
 
     public SeaPathNode(Point point, int permits) {
         this.node = point;
-        this.used = false;
         this.available = new Semaphore(permits,true);
     }
 

@@ -2,8 +2,10 @@ package airports;
 
 import vehicles.Airplane;
 import others.Point;
+import vehicles.CivilianAirplane;
 
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 
 public abstract class Airport extends Point {
@@ -11,6 +13,7 @@ public abstract class Airport extends Point {
     private int maxCapacity;
     private int currentCapacity;
     private List<Airplane> airplanesIn;
+    private Semaphore available;
 
     public Airport(double x, double y, String name, int maxCapacity, List<Airplane> airplanesIn) {
         super(x, y);
@@ -18,6 +21,26 @@ public abstract class Airport extends Point {
         this.name = name;
         this.maxCapacity = maxCapacity;
         this.airplanesIn = airplanesIn;
+        available = new Semaphore(maxCapacity, true);
+    }
+
+    public Semaphore getAvailable(){
+        return available;
+    }
+
+    public void land(Airplane airplane){
+        currentCapacity+=1;
+        getAirplanesIn().add(airplane);
+        if(airplane instanceof CivilianAirplane){
+            ((CivilianAirplane) airplane).exchangePassengers();
+        }
+        //TODO fuel
+
+    }
+
+    public void depart(Airplane airplane){
+        currentCapacity-=1;
+        getAirplanesIn().remove(airplane);
     }
 
     @Override
@@ -26,19 +49,6 @@ public abstract class Airport extends Point {
                 "\nMaximum capacity: " + this.getMaxCapacity() +
                 "\nSpots taken: " + this.getCurrentCapacity() +
                 "\nAirplanes in: " + this.getAirplanesIn();
-    }
-
-    public void addAirplaneToAirplanesIn(Airplane airplane) {
-        if (currentCapacity <= maxCapacity) {
-            airplanesIn.add(airplane);
-            currentCapacity += 1;
-        }
-        // TODO airplane.waitToBeletIn???
-    }
-
-    public void removeAirplaneFromAirplanesIn(Airplane airplane) {
-        currentCapacity -= 1;
-        airplanesIn.remove(airplane);
     }
 
     public String getName() {

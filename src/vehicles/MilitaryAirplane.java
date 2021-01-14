@@ -3,11 +3,13 @@ package vehicles;
 import airports.Airport;
 import enums.Weapons;
 
+import java.util.List;
+
 public class MilitaryAirplane extends Airplane {
     private Weapons weapons;
 
-    public MilitaryAirplane(double x, double y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, Weapons weapons, double speed) {
-        super(x, y, id, amountOfStaff, currentFuel, maxFuel, destination, speed);
+    public MilitaryAirplane(double x, double y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, Weapons weapons, double speed, List<Airport> path) {
+        super(x, y, id, amountOfStaff, currentFuel, maxFuel, destination, speed, path);
         this.weapons = weapons;
     }
 
@@ -21,10 +23,6 @@ public class MilitaryAirplane extends Airplane {
         return "Military Airplane, id: " + this.getId() +
                 super.getInfo() +
                 "\nArmament: " + this.getWeapons();
-    }
-
-    @Override
-    public void callEmergency() {
     }
 
     public Weapons getWeapons() {

@@ -22,6 +22,7 @@ public class Main extends Application {
 
         mystage1.setOnCloseRequest(event -> {
             Platform.exit();
+            System.exit(0);
         });
 
         mystage1.heightProperty().addListener(((observable, oldValue, newValue) -> {
@@ -32,6 +33,7 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
                 controlPanelController.getMapController().refresh();
+                //System.out.println(controlPanelController.getEntities().getListOfAirports().get(7).getAvailable().availablePermits());
             }
         };
         animationTimer.start();

@@ -10,7 +10,6 @@ import java.util.List;
 
 public class Entities {
 
-
     public Entities(AirPathsGraph airPathsGraph) {
         SeaPathsGraph seaPathsGraph = new SeaPathsGraph();
         this.listOfSeaPathNodes = seaPathsGraph.getListOfNodes();
@@ -29,7 +28,6 @@ public class Entities {
     private List<Ship> listOfShips = new ArrayList<>();
     private List<Ship> listofCivilianShips = new ArrayList<>();
     private List<Ship> listofMilitaryShips = new ArrayList<>();
-
 
     private List<SeaPathNode> listOfSeaPathNodes;
     private AirPathsGraph airPathsGraph;

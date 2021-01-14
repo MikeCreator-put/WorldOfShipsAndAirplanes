@@ -3,6 +3,7 @@ package GUI;
 import airports.Airport;
 import airports.CivilianAirport;
 import airports.MilitaryAirport;
+import enums.AirplaneState;
 import enums.Companies;
 import enums.Weapons;
 import javafx.fxml.FXML;
@@ -54,10 +55,6 @@ public class ControlPanelController {
         thisStage.show();
     }
 
-    //for test purposes
-    private final Airplane p1 = new CivilianAirplane(23, 23, 101, 15, 32.32, 32.32, null, 50, 12, 15);
-    private final Airplane p2 = new MilitaryAirplane(51, 51, 102, 31, 99.99, 99.99, null, Weapons.NuclearWarhead, 99);
-
     @FXML
     Button newAirplaneButton;
     @FXML
@@ -82,15 +79,10 @@ public class ControlPanelController {
     Button cancelButton;
     @FXML
     Label informationsLabel;
-    Point informationsLabelItem = null;
-    public Point getInformationsLabelItem(){
-        return informationsLabelItem;
-    }
     @FXML
     Line line;
     @FXML
     StackPane stackPaneForChooseTypeComboBox;
-
     @FXML
     TreeView<Point> myTreeView;
     private final TreeItem<Point> airplanes = new TreeItem<>(new Point("Airplanes"));
@@ -139,6 +131,13 @@ public class ControlPanelController {
         handleTreeClicks();
     }
 
+
+    Point informationsLabelItem = null;
+
+    public Point getInformationsLabelItem() {
+        return informationsLabelItem;
+    }
+
     public void setInformationsLabel(Point item) {
         if (item instanceof Vehicle || item instanceof Airport) {
             informationsLabel.setVisible(true);
@@ -164,9 +163,6 @@ public class ControlPanelController {
     private void handleTreeClicks() {
         myTreeView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
             setInformationsLabel(newValue.getValue());
-//            newValue.getValue().xProperty().addListener((((observable1, oldValue1, newValue1) -> {
-//                setInformationsLabel(newValue.getValue());
-//            })));
         }));
     }
 
@@ -174,25 +170,30 @@ public class ControlPanelController {
     public void deleteEntityButtonClicked() {
         if (selectedVehicle != null) {
             if (selectedVehicle instanceof Ship) {
-                ((Ship)selectedVehicle).stop();
+                ((Ship) selectedVehicle).stop();
                 entities.removeShip((Ship) selectedVehicle);
             }
             if (selectedVehicle instanceof Airplane) {
-                // TODO airplane.stop
+                ((Airplane) selectedVehicle).stop();
                 entities.removeAirplane((Airplane) selectedVehicle);
             }
             TreeItem<Point> c = new TreeItem<>(selectedVehicle);
             try {
-                for(TreeItem<Point> item : itemsList){
-                    if(c.getValue().equals(item.getValue())){
+                for (TreeItem<Point> item : itemsList) {
+                    if (c.getValue().equals(item.getValue())) {
                         item.getParent().getChildren().remove(item);
                         itemsList.remove(item);
                     }
-            }}catch(ConcurrentModificationException ignored){}
+                }
+            } catch (ConcurrentModificationException ignored) {
+            }
             selectedVehicle = null;
+            informationsLabelItem = null;
             mapController.refresh();
-            informationsLabel.setVisible(false);
+            setInformationsLabel(null);
             deleteEntityButton.setVisible(false);
+            changeRouteButton.setVisible(false);
+            callEmergencyButton.setVisible(false);
         }
     }
 
@@ -447,12 +448,14 @@ public class ControlPanelController {
             int value = Integer.parseInt(textField.getText());
             if (value < 0) {
                 AlertBox.display("Please provide positive number for " + stringValue);
+                textField.clear();
                 return -1;
             } else {
                 return value;
             }
         } catch (NumberFormatException e) {
             AlertBox.display("Please provide valid " + stringValue + " and try again");
+            textField.clear();
             return -1;
         }
     }
@@ -462,12 +465,14 @@ public class ControlPanelController {
             double value = Double.parseDouble(textField.getText());
             if (value < 0) {
                 AlertBox.display("Please provide positive number for " + stringValue);
+                textField.clear();
                 return -1;
             } else {
                 return value;
             }
         } catch (NumberFormatException e) {
             AlertBox.display("Please provide valid " + stringValue + " and try again");
+            textField.clear();
             return -1;
         }
     }
@@ -488,17 +493,13 @@ public class ControlPanelController {
             if (checkMaxAndCurrentPassengers(maxPassengers, currentPassengers)) {
                 int id = entities.getNewId();
                 CivilianAirport creator = (CivilianAirport) startingLocationComboBox.getValue();
-                //search
                 List<Airport> path = entities.getAirPathsGraph().getPathDijkstra(creator, destination);
-                System.out.println(path);
-//                System.out.println(creator);
-//                System.out.println(destination);
-//                System.out.println(path);
-                Airplane newAirplane = creator.createPlane(id, destination, amountOfStaff, maxPassengers, currentPassengers, speed, currentFuel, maxFuel);
+                Airplane newAirplane = creator.createPlane(id, destination, amountOfStaff, maxPassengers, currentPassengers, speed, currentFuel, maxFuel, path);
                 entities.addAirplane(newAirplane);
                 addChild(civilianAirplanes, newAirplane);
                 newEntityVbox.setVisible(false);
                 mapController.refresh();
+                newAirplane.start();
             }
         }
     }
@@ -510,15 +511,20 @@ public class ControlPanelController {
             int id = entities.getNewId();
             if (startingLocationComboBox.getValue() instanceof Airport) {
                 MilitaryAirport creator = (MilitaryAirport) startingLocationComboBox.getValue();
-                newAirplane = creator.createPlane(id, destination, amountOfStaff, weapons, speed, currentFuel, maxFuel);
+                List<Airport> path = entities.getAirPathsGraph().getPathDijkstra(creator, destination);
+                newAirplane = creator.createPlane(id, destination, amountOfStaff, weapons, speed, currentFuel, maxFuel, path);
             } else { //it is a Military Ship
                 MilitaryShip creator = (MilitaryShip) startingLocationComboBox.getValue();
-                newAirplane = creator.createPlane(id, destination, amountOfStaff, speed, currentFuel, maxFuel);
+                List<Airport> path = entities.getAirPathsGraph().getPathDijkstra(findNearestAirport(creator, entities.getListOfAirports()), destination);
+                path.add(0, new MilitaryAirport(creator.getX(), creator.getY(), "Military Ship, id: " + String.valueOf(creator.getId()), 1, new ArrayList<>()));
+                newAirplane = creator.createPlane(id, destination, amountOfStaff, speed, currentFuel, maxFuel, path);
             }
             entities.addAirplane(newAirplane);
             addChild(militaryAirplanes, newAirplane);
             newEntityVbox.setVisible(false);
             mapController.refresh();
+            newAirplane.start();
+            chosenWeapon = null;
         }
     }
 
@@ -537,6 +543,7 @@ public class ControlPanelController {
                 newEntityVbox.setVisible(false);
                 mapController.refresh();
                 newShip.start();
+                chosenCompany = null;
             }
         }
     }
@@ -553,6 +560,7 @@ public class ControlPanelController {
             newEntityVbox.setVisible(false);
             mapController.refresh();
             newShip.start();
+            chosenWeapon = null;
         }
     }
 
@@ -579,6 +587,47 @@ public class ControlPanelController {
         }
     }
 
+    public Airport findNearestAirport(Point point, List<Airport> airports) {
+        double minDist = Double.MAX_VALUE;
+        Airport closest = null;
+        for (Airport airport : airports) {
+            double tmpDist = airport.distanceTo(point);
+            if (tmpDist < minDist) {
+                minDist = tmpDist;
+                closest = airport;
+            }
+        }
+        return closest;
+    }
+
+    public void callEmergencyButtonClicked() {
+        double posX = selectedVehicle.getX();
+        double posY = selectedVehicle.getY();
+        List<Airport> path = new ArrayList<>();
+        if (selectedVehicle instanceof MilitaryAirplane) {
+            path.add(findNearestAirport(new Point(posX, posY), entities.getListOfMilitaryAirports()));
+        } else { //instanceof CivilianAirplane
+            path.add(findNearestAirport(new Point(posX, posY), entities.getListOfCivilianAirports()));
+        }
+        ((Airplane) selectedVehicle).setPath(path);
+        ((Airplane) selectedVehicle).setState(AirplaneState.emergency);
+    }
+
+    public void changeRouteButtonClicked(){
+        //TODO allow user to choose destination
+        Airplane selectedAirplane = ((Airplane) selectedVehicle);
+        if(selectedAirplane.getPath().size()== 0 && selectedAirplane.getState() == AirplaneState.waitingForDestination){
+            selectedAirplane.setPath(entities.getAirPathsGraph().getPathDijkstra(selectedAirplane.getCurrentLocation(),entities.getAirPathsGraph().getListOfAirports().get(0)));
+        } else if (selectedAirplane.getState() == AirplaneState.travelling){
+            List<Airport> newPath = entities.getAirPathsGraph().getPathDijkstra(selectedAirplane.getNextLanding(), entities.getAirPathsGraph().getListOfAirports().get(0));
+            newPath.remove(0);
+            selectedAirplane.setDestination(newPath.get(newPath.size()-1));
+            selectedAirplane.setPath(newPath);
+        } else if (selectedAirplane.getState() != AirplaneState.travelling && selectedAirplane.getState() != AirplaneState.waitingForDestination){
+            AlertBox.display("Can't change route right now, try again in a moment");
+        }
+    }
+
     public void cancelButtonClicked() {
         newEntityVbox.setVisible(false);
     }
@@ -589,17 +638,23 @@ public class ControlPanelController {
         line.setEndY(0);
     }
 
-    public void showMyPane(){
-        thisStage.show();
-    }
-
     public Entities getEntities() {
         return this.entities;
+    }
+
+    public void setSelectedVehicle(Point point) {
+        selectedVehicle = point;
     }
 
     @FXML
     public void initialize() {
         mapController = new MapController(this);
+
+        changeRouteButton.setMinWidth(150);
+        deleteEntityButton.setMinWidth(150);
+        callEmergencyButton.setMinWidth(150);
+        createButton.setMinWidth(75);
+        cancelButton.setMinWidth(75);
 
         newAirplaneButton.setOnAction(event -> newAirplaneButtonClicked());
         newShipButton.setOnAction(event -> newShipButtonClicked());
@@ -607,17 +662,13 @@ public class ControlPanelController {
         createButton.setOnAction(event -> createButtonClicked());
         viewMapButton.setOnAction(event -> viewMapButtonClicked());
         cancelButton.setOnAction(event -> cancelButtonClicked());
-
+        callEmergencyButton.setOnAction(event -> callEmergencyButtonClicked());
+        changeRouteButton.setOnAction(event -> changeRouteButtonClicked());
 
         newEntityVbox.setVisible(false);
         deleteEntityButton.setVisible(false);
         callEmergencyButton.setVisible(false);
         changeRouteButton.setVisible(false);
-
-        //test purposes
-
-        entities.addAirplane(p1);
-        entities.addAirplane(p2);
 
         mapController.refresh();
         buildTreeView();

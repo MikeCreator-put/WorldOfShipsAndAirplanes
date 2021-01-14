@@ -2,13 +2,16 @@ package vehicles;
 
 import airports.Airport;
 
+import java.util.List;
+import java.util.Random;
+
 
 public class CivilianAirplane extends Airplane {
     private int maxPassengers;
     private int currentPassengers;
 
-    public CivilianAirplane(double x, double y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, int maxPassengers, int currentPassengers, double speed) {
-        super(x, y, id, amountOfStaff, currentFuel, maxFuel, destination, speed);
+    public CivilianAirplane(double x, double y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, int maxPassengers, int currentPassengers, double speed, List<Airport> path) {
+        super(x, y, id, amountOfStaff, currentFuel, maxFuel, destination, speed, path);
         this.maxPassengers = maxPassengers;
         this.currentPassengers = currentPassengers;
     }
@@ -27,11 +30,10 @@ public class CivilianAirplane extends Airplane {
     }
 
     public void exchangePassengers() {
+        Random random = new Random();
+        currentPassengers = random.nextInt(maxPassengers);
     }
 
-    @Override
-    public void callEmergency() {
-    }
 
     public int getMaxPassengers() {
         return maxPassengers;

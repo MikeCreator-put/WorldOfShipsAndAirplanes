@@ -44,6 +44,7 @@ public class MapController {
         for(Airplane airplane : controlPanelController.getEntities().getListofAirplanes()){
             if(airplane.getX()-5 <= x && x <= airplane.getX()+5 && airplane.getY()-5 <= y && y <= airplane.getY()+5){
                 controlPanelController.setInformationsLabel(airplane);
+                controlPanelController.setSelectedVehicle(airplane);
             }
         }
     }
@@ -52,6 +53,7 @@ public class MapController {
         for(Ship ship : controlPanelController.getEntities().getListOfShips()){
             if(ship.getX()-5 <= x && x <= ship.getX()+5 && ship.getY()-5 <= y && y <= ship.getY()+5){
                 controlPanelController.setInformationsLabel(ship);
+                controlPanelController.setSelectedVehicle(ship);
             }
         }
     }

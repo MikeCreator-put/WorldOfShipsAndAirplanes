@@ -1,10 +1,13 @@
 package vehicles;
 
 import airports.Airport;
-import others.Point;
+import airports.CivilianAirport;
+import airports.MilitaryAirport;
+import enums.AirplaneState;
+import others.AirPathsGraph;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class Airplane extends Vehicle {
     private int amountOfStaff;
@@ -12,20 +15,144 @@ public abstract class Airplane extends Vehicle {
     private double maxFuel;
     private List<Airport> path;
     private Airport nextLanding;
-
+    private AirplaneState airplaneState = AirplaneState.waitingToBeLetIn;
+    private Airport currentLocation;
     private Airport destination;
+    private AirPathsGraph airPathsGraph = new AirPathsGraph();
 
-    @Override
-    public void run() {//TODO
+    public void setCurrentLocation(Airport currentLocation){
+        this.currentLocation = currentLocation;
     }
 
 
-    public Airplane(double x, double y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, double maxSpeed) {
+    private Thread worker;
+    private final AtomicBoolean running = new AtomicBoolean(true);
+
+    public void start(){
+        worker = new Thread(this);
+        worker.start();
+    }
+
+    public void stop(){
+        currentLocation.getAvailable().release();
+        currentLocation.depart(this);
+        running.set(false);
+    }
+
+    private int waitCounter = 23;
+
+    public Boolean occupyCrossing(Airport crossing) {
+        if (crossing.getAvailable().availablePermits() == 0) {
+            waitCounter--;
+            if (waitCounter < 0) {
+                crossing.getAvailable().release();
+                if ((currentLocation instanceof MilitaryAirport && this instanceof MilitaryAirplane) || (currentLocation instanceof CivilianAirport && this instanceof CivilianAirplane)) {
+                    crossing.depart(this);
+                }
+                waitCounter = 23;
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            crossing.getAvailable().release();
+            if ((currentLocation instanceof MilitaryAirport && this instanceof MilitaryAirplane) || (currentLocation instanceof CivilianAirport && this instanceof CivilianAirplane)) {
+                crossing.depart(this);
+            }
+            return false;
+        }
+    }
+
+    @Override
+    public void run() {
+        setState(AirplaneState.travelling);
+        nextLanding = path.get(1);
+        currentLocation = path.get(0);
+        path.remove(0);
+        path.remove(0);
+        for (;;) {
+            System.out.println(airPathsGraph.getListOfAirports().get(1).getAvailable().availablePermits());
+            System.out.println(getState());
+            //System.out.println("running");
+            if(!running.get()){
+                System.out.println("thread stopped");
+                break;
+            }
+            switch (getState()) {
+                case emergency -> {
+                    System.out.println("emergency");
+                    nextLanding = path.get(0);
+                    destination = path.get(0);
+                    path.clear();
+                    setState(AirplaneState.travelling);
+                }
+                case travelling -> {
+                    Boolean arrived = moveToPoint(getTimeFrame(), nextLanding, 5);
+                    if (arrived) {
+                        currentLocation = nextLanding;
+                        if (currentLocation == destination){
+                            setState(AirplaneState.arrivedAtDestination);
+                        }else{
+                            nextLanding=path.get(0);
+                            path.remove(0);
+                            setState(AirplaneState.waitingToBeLetIn);
+                        }
+                    }
+                }
+                case waitingToBeLetIn -> {
+                    if (currentLocation.getAvailable().tryAcquire()) {
+                        if ((currentLocation instanceof MilitaryAirport && this instanceof MilitaryAirplane) || (currentLocation instanceof CivilianAirport && this instanceof CivilianAirplane)) {
+                            currentLocation.land(this);
+                        }
+                        setState(AirplaneState.arrived);
+                    }
+                }
+                case arrived -> {
+                    if(moveToPoint(getTimeFrame(), currentLocation, 0.1)) {
+                        Boolean occupying = occupyCrossing(currentLocation);
+                        if (!occupying) {
+                            setState(AirplaneState.travelling);
+                        }
+                    }
+                }
+                case arrivedAtDestination -> {
+                    if(destination.getAvailable().tryAcquire()) {
+                        System.out.println("acquired from: ");
+                        System.out.println(destination.getAvailable().availablePermits());
+                        System.out.println(destination);
+                        this.setX(destination.getX());
+                        this.setY(destination.getY());
+                        destination.land(this);
+                        setState(AirplaneState.waitingForDestination);
+                    }
+                }
+                case waitingForDestination ->{
+                    if(getPath().size()>0){
+                        destination = path.get(path.size()-1);
+                        path.remove(0); //first element of path is current location which is already set up correctly
+                        nextLanding = path.get(0); //get next landing
+                        path.remove(0); //remove next landing from path
+                        currentLocation.getAvailable().release();
+                        currentLocation.depart(this);
+                        setState(AirplaneState.travelling);
+                    }
+                }
+            }
+            try {
+                Thread.sleep(33);
+            } catch (InterruptedException ie) {
+                ie.printStackTrace();
+            }
+        }
+
+    }
+
+    public Airplane(double x, double y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, double maxSpeed, List<Airport> path) {
         super(x, y, id, maxSpeed);
         this.amountOfStaff = amountOfStaff;
         this.currentFuel = currentFuel;
         this.maxFuel = maxFuel;
-        this.path = new ArrayList<>(); //TODO to be changed
+        this.path = path;
         if (path.isEmpty()) {
             this.nextLanding = null;
         } else {
@@ -38,6 +165,7 @@ public abstract class Airplane extends Vehicle {
     public String getInfo() {
         return
                 super.getInfo() +
+                        "\nState: " + this.getState() +
                         "\nNumber of staff: " + this.getAmountOfStaff() +
                         "\nCurrent fuel: " + this.getCurrentFuel() +
                         "\nMax fuel: " + this.getMaxFuel() +
@@ -47,21 +175,9 @@ public abstract class Airplane extends Vehicle {
                         "\nDestination: " + this.getDestination();
     }
 
-    public void refuel() {
+    public Airport getCurrentLocation(){
+        return currentLocation;
     }
-
-    public void stop() {
-    }
-
-    public abstract void callEmergency();
-
-    public void travelTo(Airport airport) {
-    }
-
-    public Airport findNearestAirport(List<Airport> lotniska) {
-        return lotniska.get(0); //temporary
-    }
-
 
     public int getAmountOfStaff() {
         return amountOfStaff;
@@ -106,5 +222,13 @@ public abstract class Airplane extends Vehicle {
 
     public void setDestination(Airport destination) {
         this.destination = destination;
+    }
+
+    public AirplaneState getState() {
+        return airplaneState;
+    }
+
+    public void setState(AirplaneState airplaneState) {
+        this.airplaneState = airplaneState;
     }
 }

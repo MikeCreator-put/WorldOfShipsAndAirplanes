@@ -1,12 +1,9 @@
 package vehicles;
 
-import GUI.MapController;
 import enums.ShipState;
 import others.Point;
 import others.SeaPathNode;
-import others.Vector;
 
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,7 +22,7 @@ public abstract class Ship extends Vehicle {
         this.state = state;
     }
 
-    private ShipState state = ShipState.arrived;
+    private ShipState state;
 
 
     public Ship(double x, double y, int id, double maxSpeed, SeaPathNode startingLocationNode) {
@@ -64,27 +61,6 @@ public abstract class Ship extends Vehicle {
         return newDestination;
     }
 
-
-    public Boolean moveToSeaNode(double time, SeaPathNode node, double safeDistance) {
-
-        Vector vector = new Vector(node.getNode().getX() - this.getX(), node.getNode().getY() - this.getY());
-        Vector normalized = new Vector(vector);
-        normalized.normalize();
-        normalized.mult(this.getMaxSpeed() * time);
-        normalized.recalculateMagnitude();
-        if (normalized.getMagnitude() + safeDistance < vector.getMagnitude()) {
-            this.setX(this.getX() + normalized.getX());
-            this.setY(this.getY() + normalized.getY());
-            return false;
-        } else {
-            normalized.normalize();
-            normalized.mult(safeDistance);
-            this.setX(node.getNode().getX() - normalized.getX());
-            this.setY(node.getNode().getY() - normalized.getY());
-            return true;
-        }
-    }
-
     private Thread worker;
     private final AtomicBoolean running = new AtomicBoolean(true);
 
@@ -94,6 +70,9 @@ public abstract class Ship extends Vehicle {
     }
 
     public void stop(){
+        if(getState() == ShipState.arrived){
+            currentLocation.getAvailable().release();
+        }
         running.set(false);
     }
 
@@ -104,10 +83,10 @@ public abstract class Ship extends Vehicle {
             if(!running.get()){
                 System.out.println("thread stopped");
                 break;
-            }
+            };
             switch (getState()) {
                 case travelling -> {
-                    Boolean arrived = moveToSeaNode(getTimeFrame(), destination, 5);
+                    Boolean arrived = moveToPoint(getTimeFrame(), destination.getNode(), 5);
                     if (arrived) {
                         previousLocation = currentLocation;
                         currentLocation = destination;
@@ -121,7 +100,7 @@ public abstract class Ship extends Vehicle {
                     }
                 }
                 case arrived -> {
-                    if(moveToSeaNode(getTimeFrame(), currentLocation, 0.1)) {
+                    if(moveToPoint(getTimeFrame(), currentLocation.getNode(), 0.1)) {
                         Boolean occupying = occupyCrossing(currentLocation);
                         if (!occupying) {
                             setState(ShipState.travelling);
@@ -141,7 +120,8 @@ public abstract class Ship extends Vehicle {
     public String getInfo() {
         return
                 super.getInfo() +
-                        "\nMax speed: " + this.getMaxSpeed() + " units";
+                        "\nState: " + this.getState() +
+                        "\nSpeed: " + this.getMaxSpeed() + " units";
     }
 
 }

@@ -7,10 +7,8 @@ import airports.MilitaryAirport;
 
 import java.util.*;
 
-
 //Dijkstra algorithm from https://stackoverflow.com/questions/17480022/java-find-shortest-path-between-2-points-in-a-distance-weighted-map
 //slightly modified for purposes of my project
-
 
 class Vertex implements Comparable<Vertex> {
     public final String name;
@@ -23,6 +21,9 @@ class Vertex implements Comparable<Vertex> {
         this.airport = airport;
         this.name = airport.getName();
     }
+    public Edge[] getAdjacencies(){
+        return adjacencies;
+    }
 
     public String toString() {
         return name;
@@ -33,17 +34,24 @@ class Vertex implements Comparable<Vertex> {
     }
 
     public Airport getAirport(){return airport;}
-
 }
-
 
 class Edge {
     public final Vertex target;
     public final double weight;
+    //todo drogi jednokierunkowe
+    public final Boolean occupied = false;
+    public Boolean oneWay;
 
-    public Edge(Vertex argTarget, double argWeight) {
+    public Edge(Vertex argTarget, double argWeight){
         target = argTarget;
         weight = argWeight;
+        oneWay = false;
+    }
+    public Edge(Vertex argTarget, double argWeight, Boolean oneWay) {
+        target = argTarget;
+        weight = argWeight;
+        oneWay = oneWay;
     }
 
     public Vertex getTarget(){
@@ -53,13 +61,13 @@ class Edge {
 
 public class AirPathsGraph {
     private Airport tokyo = new CivilianAirport(811, 153, "Tokyo", 54, new ArrayList<>());
-    private Airport mexico = new CivilianAirport(111, 213, "Mexico City", 35, new ArrayList<>());
+    private Airport mexico = new CivilianAirport(111, 213, "Mexico City", 3, new ArrayList<>());
     private Airport atlanta = new CivilianAirport(160, 160, "Atlanta", 78, new ArrayList<>());
     private Airport buenos_aires = new CivilianAirport(239, 403, "Buenos Aires", 44, new ArrayList<>());
     private Airport paris = new CivilianAirport(419, 109, "Paris", 38, new ArrayList<>());
     private Airport dubai = new CivilianAirport(573, 193, "Dubai", 66, new ArrayList<>());
     private Airport melbourne = new CivilianAirport(824, 412, "Melbourne", 23, new ArrayList<>());
-    private Airport cape_town = new MilitaryAirport(463, 396, "Cape Town", 11, new ArrayList<>());
+    private Airport cape_town = new MilitaryAirport(463, 396, "Cape Town", 8, new ArrayList<>());
     private Airport sao_louis = new MilitaryAirport(257, 285, "Sao Louis", 10, new ArrayList<>());
     private Airport moscow = new MilitaryAirport(524, 88, "Moscow", 31, new ArrayList<>());
     private Airport crossing1 = new CrossingAirport(285, 183, "crossing1", 1, new ArrayList<>());
@@ -85,16 +93,16 @@ public class AirPathsGraph {
     private Map<Airport, List<Airport>> adjList;
 
     public AirPathsGraph() {
-        tokyoV.adjacencies = new Edge[]{new Edge(melbourneV, tokyo.distanceTo(melbourne)), new Edge(crossing3V, tokyo.distanceTo(crossing3))};
-        mexicoV.adjacencies = new Edge[]{new Edge(atlantaV, mexico.distanceTo(atlanta)), new Edge(crossing1V, mexico.distanceTo(crossing1)), new Edge(sao_louisV, mexico.distanceTo(sao_louis))};
+        tokyoV.adjacencies = new Edge[]{new Edge(melbourneV, tokyo.distanceTo(melbourne), true), new Edge(crossing3V, tokyo.distanceTo(crossing3))};
+        mexicoV.adjacencies = new Edge[]{new Edge(atlantaV, mexico.distanceTo(atlanta)), new Edge(crossing1V, mexico.distanceTo(crossing1)), new Edge(sao_louisV, mexico.distanceTo(sao_louis),true)};
         atlantaV.adjacencies = new Edge[]{new Edge(mexicoV, atlanta.distanceTo(mexico)), new Edge(crossing1V, atlanta.distanceTo(crossing1))};
         buenos_airesV.adjacencies = new Edge[]{new Edge(cape_townV, buenos_aires.distanceTo(cape_town)), new Edge(crossing2V, buenos_aires.distanceTo(crossing2)), new Edge(sao_louisV, buenos_aires.distanceTo(sao_louis))};
         parisV.adjacencies = new Edge[]{new Edge(crossing1V, paris.distanceTo(crossing1)), new Edge(dubaiV, paris.distanceTo(dubai)), new Edge(moscowV, paris.distanceTo(moscow))};
-        dubaiV.adjacencies = new Edge[]{new Edge(crossing2V, dubai.distanceTo(crossing2)), new Edge(parisV, dubai.distanceTo(paris)), new Edge(moscowV, dubai.distanceTo(moscow)), new Edge(crossing3V, dubai.distanceTo(crossing3))};
-        melbourneV.adjacencies = new Edge[]{new Edge(tokyoV, melbourne.distanceTo(tokyo)), new Edge(crossing3V, melbourne.distanceTo(crossing3))};
+        dubaiV.adjacencies = new Edge[]{new Edge(crossing2V, dubai.distanceTo(crossing2)), new Edge(parisV, dubai.distanceTo(paris)), new Edge(moscowV, dubai.distanceTo(moscow), true), new Edge(crossing3V, dubai.distanceTo(crossing3))};
+        melbourneV.adjacencies = new Edge[]{new Edge(tokyoV, melbourne.distanceTo(tokyo), true), new Edge(crossing3V, melbourne.distanceTo(crossing3))};
         cape_townV.adjacencies = new Edge[]{new Edge(buenos_airesV, cape_town.distanceTo(buenos_aires)), new Edge(crossing2V, cape_town.distanceTo(crossing2))};
-        sao_louisV.adjacencies = new Edge[]{new Edge(sao_louisV, sao_louis.distanceTo(buenos_aires)), new Edge(crossing2V, sao_louis.distanceTo(crossing2)), new Edge(mexicoV, sao_louis.distanceTo(mexico))};
-        moscowV.adjacencies = new Edge[]{new Edge(parisV, moscow.distanceTo(paris)), new Edge(dubaiV, moscow.distanceTo(dubai))};
+        sao_louisV.adjacencies = new Edge[]{new Edge(sao_louisV, sao_louis.distanceTo(buenos_aires)), new Edge(crossing2V, sao_louis.distanceTo(crossing2)), new Edge(mexicoV, sao_louis.distanceTo(mexico),true)};
+        moscowV.adjacencies = new Edge[]{new Edge(parisV, moscow.distanceTo(paris)), new Edge(dubaiV, moscow.distanceTo(dubai),true)};
         crossing1V.adjacencies = new Edge[]{new Edge(atlantaV, crossing1.distanceTo(atlanta)), new Edge(mexicoV, crossing1.distanceTo(mexico)), new Edge(crossing2V, crossing1.distanceTo(crossing2)), new Edge(parisV, crossing1.distanceTo(paris))};
         crossing2V.adjacencies = new Edge[]{new Edge(cape_townV, crossing2.distanceTo(cape_town)), new Edge(dubaiV, crossing2.distanceTo(dubai)), new Edge(crossing1V, crossing2.distanceTo(crossing1)), new Edge(sao_louisV, crossing2.distanceTo(sao_louis)), new Edge(buenos_airesV, crossing2.distanceTo(buenos_aires))};
         crossing3V.adjacencies = new Edge[]{new Edge(dubaiV, crossing3.distanceTo(dubai)), new Edge(tokyoV, crossing3.distanceTo(tokyo)), new Edge(melbourneV, crossing3.distanceTo(melbourne))};
@@ -124,8 +132,6 @@ public class AirPathsGraph {
         mapAirportsToVertexes.put(crossing1, crossing1V);
         mapAirportsToVertexes.put(crossing2, crossing2V);
         mapAirportsToVertexes.put(crossing3, crossing3V);
-        System.out.println(mapAirportsToVertexes);
-
     }
 
     private void computePaths(Vertex source) {
@@ -161,14 +167,14 @@ public class AirPathsGraph {
 
     public List<Airport> getPathDijkstra(Airport start, Airport dest) {
         computePaths(mapAirportsToVertexes.get(start));
+        //distance can be useful todo fuel
+        double distance = getMapAirportsToVertexes().get(dest).minDistance;
         List<Vertex> path = getShortestPathTo(mapAirportsToVertexes.get(dest));
         List<Airport> pathOfAirports = new ArrayList<>();
         for (Vertex vertex : path) {
             Airport airport = vertex.getAirport();
             pathOfAirports.add(airport);
         }
-        //System.out.println("Path: " + path);
-        //System.out.println("Path but airports" + pathOfAirports);
         for(Vertex vertex : listOfVertexes){
             vertex.minDistance = Double.POSITIVE_INFINITY;
             vertex.previous = null;

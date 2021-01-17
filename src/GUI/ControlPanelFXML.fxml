@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -26,12 +27,18 @@
     <center>
         <VBox BorderPane.alignment="CENTER">
             <children>
-                <HBox spacing="10.0">
+                <HBox fx:id="buttonsHbox" minWidth="250.0" spacing="10.0">
                     <children>
-                        <Button fx:id="newAirplaneButton" mnemonicParsing="false" text="New Airplane" />
-                        <Button fx:id="newShipButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="New Ship" />
-                        <Region HBox.hgrow="ALWAYS" />
-                        <Button fx:id="viewMapButton" layoutX="62.0" layoutY="10.0" mnemonicParsing="false" text="View Map" />
+                  <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="newAirplaneButton" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="110.0" mnemonicParsing="false" text="New Airplane" />
+                        <Button fx:id="newShipButton" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="110.0" mnemonicParsing="false" text="New Ship" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="viewMapButton" layoutX="62.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="230.0" mnemonicParsing="false" text="View Map">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin></Button>
+                  <Region HBox.hgrow="ALWAYS" />
                     </children>
                     <padding>
                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
@@ -39,35 +46,52 @@
                 </HBox>
                 <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <VBox prefHeight="478.0" prefWidth="233.0" HBox.hgrow="ALWAYS">
+                        <VBox minWidth="250.0" prefHeight="503.0" prefWidth="257.0" HBox.hgrow="ALWAYS">
                             <children>
-                                <Region VBox.vgrow="ALWAYS" />
-                                <Label fx:id="informationsLabel" prefHeight="286.0" prefWidth="221.0" text="Here you'll see informations about chosen entity" wrapText="true" VBox.vgrow="ALWAYS">
-                                    <opaqueInsets>
-                                        <Insets />
-                                    </opaqueInsets>
-                                    <padding>
-                                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                    </padding>
-                                </Label>
-                                <VBox prefHeight="200.0" prefWidth="100.0" spacing="2.0" VBox.vgrow="ALWAYS">
-                                    <children>
-                                        <Region />
-                                        <Button fx:id="deleteEntityButton" mnemonicParsing="false" text="Delete Entity" />
-                                        <Region />
-                                        <Button fx:id="callEmergencyButton" mnemonicParsing="false" text="Call Emergency" />
-                                        <Region />
-                                        <Button fx:id="changeRouteButton" mnemonicParsing="false" text="Change Route" />
-                                        <Region />
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                    </VBox.margin>
-                                    <padding>
-                                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                    </padding>
-                                </VBox>
+                        <Region VBox.vgrow="ALWAYS" />
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                                      <Region HBox.hgrow="ALWAYS" />
+                                      <Label fx:id="informationsLabel" minHeight="286.0" minWidth="221.0" prefHeight="286.0" prefWidth="221.0" text="Here you'll see informations about chosen entity" wrapText="true">
+                                          <opaqueInsets>
+                                              <Insets />
+                                          </opaqueInsets>
+                                          <padding>
+                                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                          </padding>
+                                      </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Region HBox.hgrow="ALWAYS" />
+                                      <VBox spacing="2.0">
+                                          <children>
+                                              <Region />
+                                              <Button fx:id="deleteEntityButton" minWidth="220.0" mnemonicParsing="false" text="Delete Entity" />
+                                              <Region />
+                                              <Button fx:id="callEmergencyButton" minWidth="220.0" mnemonicParsing="false" text="Call Emergency" />
+                                    <HBox fx:id="changeRouteHbox" spacing="6.0">
+                                       <children>
+                                                    <Button fx:id="changeRouteButton" maxWidth="107.0" minWidth="107.0" mnemonicParsing="false" prefWidth="107.0" text="New destination:" />
+                                          <ComboBox fx:id="changeRouteComboBox" maxWidth="107.0" minWidth="107.0" prefWidth="107.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets top="2.0" />
+                                       </padding>
+                                    </HBox>
+                                              <Region />
+                                          </children>
+                                          <padding>
+                                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                          </padding>
+                                      </VBox>
+                              <Region HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                                 <Region />
+                        <Region VBox.vgrow="ALWAYS" />
                             </children>
                             <HBox.margin>
                                 <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
@@ -81,8 +105,9 @@
                                 <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                             </HBox.margin>
                         </Line>
-                  <VBox prefHeight="478.0" prefWidth="263.0" HBox.hgrow="ALWAYS">
+                  <VBox minWidth="250.0" prefHeight="503.0" prefWidth="247.0" HBox.hgrow="ALWAYS">
                      <children>
+                        <Region VBox.vgrow="ALWAYS" />
                         <StackPane prefHeight="150.0" prefWidth="200.0">
                            <children>
                               <Label prefHeight="18.0" prefWidth="114.0" text="New Entities creator:" textAlignment="CENTER" />
@@ -111,19 +136,18 @@
                                     <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                                  </padding>
                               </VBox>
-                              <HBox>
+                              <HBox spacing="6.0">
                                  <children>
                                     <Region HBox.hgrow="ALWAYS" />
-                                              <Button fx:id="createButton" disable="true" mnemonicParsing="false" text="Create" />
-                                    <Region HBox.hgrow="ALWAYS" />
-                                    <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel" />
+                                              <Button fx:id="createButton" disable="true" minWidth="107.0" mnemonicParsing="false" text="Create" />
+                                    <Button fx:id="cancelButton" minWidth="107.0" mnemonicParsing="false" text="Cancel" />
                                     <Region HBox.hgrow="ALWAYS" />
                                  </children>
                                  <VBox.margin>
-                                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                    <Insets bottom="6.0" top="6.0" />
                                  </VBox.margin>
                                  <padding>
-                                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                    <Insets bottom="6.0" top="6.0" />
                                  </padding>
                               </HBox>
                                       <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
@@ -132,6 +156,7 @@
                                       <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                                   </padding>
                               </VBox>
+                        <Region VBox.vgrow="ALWAYS" />
                      </children>
                      <HBox.margin>
                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />

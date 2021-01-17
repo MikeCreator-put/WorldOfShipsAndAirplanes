@@ -1,6 +1,6 @@
 package enums;
 
-public enum ShipState {
+public enum ShipStatus {
     travelling,
     arrived,
     waiting,

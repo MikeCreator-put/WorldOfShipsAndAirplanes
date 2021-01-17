@@ -2,14 +2,15 @@ package vehicles;
 
 import airports.Airport;
 import enums.Weapons;
+import others.AirPathsGraph;
 
 import java.util.List;
 
 public class MilitaryAirplane extends Airplane {
     private Weapons weapons;
 
-    public MilitaryAirplane(double x, double y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, Weapons weapons, double speed, List<Airport> path) {
-        super(x, y, id, amountOfStaff, currentFuel, maxFuel, destination, speed, path);
+    public MilitaryAirplane(double x, double y, int id, int amountOfStaff, Airport destination, Weapons weapons, double speed, List<Airport> path, AirPathsGraph airPathsGraph) {
+        super(x, y, id, amountOfStaff, destination, speed, path, airPathsGraph);
         this.weapons = weapons;
     }
 

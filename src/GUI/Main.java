@@ -32,8 +32,9 @@ public class Main extends Application {
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                controlPanelController.getMapController().refresh();
-                //System.out.println(controlPanelController.getEntities().getListOfAirports().get(7).getAvailable().availablePermits());
+                if(controlPanelController.getEntities().getListOfShips().size()!=0 || controlPanelController.getEntities().getListofAirplanes().size()!=0){
+                    controlPanelController.getMapController().refresh();
+                }
             }
         };
         animationTimer.start();

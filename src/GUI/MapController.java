@@ -45,6 +45,7 @@ public class MapController {
             if(airplane.getX()-5 <= x && x <= airplane.getX()+5 && airplane.getY()-5 <= y && y <= airplane.getY()+5){
                 controlPanelController.setInformationsLabel(airplane);
                 controlPanelController.setSelectedVehicle(airplane);
+                controlPanelController.setButtons(airplane);
             }
         }
     }
@@ -54,6 +55,7 @@ public class MapController {
             if(ship.getX()-5 <= x && x <= ship.getX()+5 && ship.getY()-5 <= y && y <= ship.getY()+5){
                 controlPanelController.setInformationsLabel(ship);
                 controlPanelController.setSelectedVehicle(ship);
+                controlPanelController.setButtons(ship);
             }
         }
     }
@@ -62,6 +64,7 @@ public class MapController {
         for(Airport airport : controlPanelController.getEntities().getListOfAirports()){
             if(airport.getX()-5 <= x && x <= airport.getX()+5 && airport.getY()-5 <= y && y <= airport.getY()+5){
                 controlPanelController.setInformationsLabel(airport);
+                controlPanelController.setButtons(airport);
                 return true;
             }
         }
@@ -131,7 +134,6 @@ public class MapController {
     private <T> void drawAirplanes(List<T> airplanes, Color color) {
         for (T airplane : airplanes) {
             MapAirplane mapAirplane = new MapAirplane(5, color, (Airplane) airplane);
-            mapAirplane.setOnMouseClicked(event -> controlPanelController.setInformationsLabel((Point) airplane));
             root.getChildren().add(mapAirplane);
         }
     }

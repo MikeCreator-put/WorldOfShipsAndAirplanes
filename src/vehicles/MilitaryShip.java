@@ -3,6 +3,7 @@ package vehicles;
 import GUI.MapController;
 import airports.Airport;
 import enums.Weapons;
+import others.AirPathsGraph;
 import others.SeaPathNode;
 
 import java.util.List;
@@ -27,8 +28,8 @@ public class MilitaryShip extends Ship {
                 "\nArmament: " + this.getWeapons();
     }
 
-    public Airplane createPlane(int id, Airport destination, int amountOfStaff, double speed, double maxFuel, double currentFuel, List<Airport> path) {
-        return new MilitaryAirplane(this.getX(), this.getY(), id, amountOfStaff, currentFuel, maxFuel, destination, this.getWeapons(), speed, path);
+    public Airplane createPlane(int id, Airport destination, int amountOfStaff, double speed, List<Airport> path, AirPathsGraph airPathsGraph) {
+        return new MilitaryAirplane(this.getX(), this.getY(), id, amountOfStaff, destination, this.getWeapons(), speed, path, airPathsGraph);
     }
 
     public Weapons getWeapons() {

@@ -1,5 +1,6 @@
 package airports;
 
+import others.AirPathsGraph;
 import vehicles.Airplane;
 import vehicles.CivilianAirplane;
 
@@ -22,7 +23,7 @@ public class CivilianAirport extends Airport {
                 super.getInfo();
     }
 
-    public Airplane createPlane(int id, Airport destination, int amountOfStaff, int maxPassengers, int currentPassengers, double speed, double currentFuel, double maxFuel, List<Airport> path) {
-        return new CivilianAirplane(this.getX(), this.getY(), id, amountOfStaff, currentFuel, maxFuel, destination, maxPassengers, currentPassengers, speed, path);
+    public Airplane createPlane(int id, Airport destination, int amountOfStaff, int maxPassengers, int currentPassengers, double speed, List<Airport> path, AirPathsGraph airPathsGraph) {
+        return new CivilianAirplane(this.getX(), this.getY(), id, amountOfStaff, destination, maxPassengers, currentPassengers, speed, path, airPathsGraph);
     }
 }

@@ -1,11 +1,11 @@
 package enums;
 
-public enum AirplaneState {
+public enum AirplaneStatus {
     travelling,
-    arrived,
+    arrivedAtCheckpoint,
     arrivedAtDestination,
     waitingToBeLetIn,
-    finalPath,
     waitingForDestination,
-    emergency
+    emergency,
+    letEnterPath
 }

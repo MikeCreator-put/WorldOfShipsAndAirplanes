@@ -34,8 +34,7 @@ public abstract class Airport extends Point {
         if(airplane instanceof CivilianAirplane){
             ((CivilianAirplane) airplane).exchangePassengers();
         }
-        //TODO fuel
-
+        airplane.setCurrentFuel(airplane.getMaxFuel());
     }
 
     public void depart(Airplane airplane){
@@ -48,7 +47,8 @@ public abstract class Airport extends Point {
         return super.getInfo() +
                 "\nMaximum capacity: " + this.getMaxCapacity() +
                 "\nSpots taken: " + this.getCurrentCapacity() +
-                "\nAirplanes in: " + this.getAirplanesIn();
+                "\nSpots available: " + this.getAvailable().availablePermits() +
+                "\nAirplanes waiting for departure:\n" + this.getAirplanesIn();
     }
 
     public String getName() {

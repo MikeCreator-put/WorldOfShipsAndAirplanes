@@ -3,7 +3,7 @@ package vehicles;
 import airports.Airport;
 import airports.CivilianAirport;
 import airports.MilitaryAirport;
-import enums.AirplaneState;
+import enums.AirplaneStatus;
 import others.AirPathsGraph;
 
 import java.util.List;
@@ -15,12 +15,13 @@ public abstract class Airplane extends Vehicle {
     private double maxFuel;
     private List<Airport> path;
     private Airport nextLanding;
-    private AirplaneState airplaneState = AirplaneState.waitingToBeLetIn;
+    private AirplaneStatus status;
+    private Airport previousLocation;
     private Airport currentLocation;
     private Airport destination;
-    private AirPathsGraph airPathsGraph = new AirPathsGraph();
+    private AirPathsGraph airPathsGraph;
 
-    public void setCurrentLocation(Airport currentLocation){
+    public void setCurrentLocation(Airport currentLocation) {
         this.currentLocation = currentLocation;
     }
 
@@ -28,12 +29,12 @@ public abstract class Airplane extends Vehicle {
     private Thread worker;
     private final AtomicBoolean running = new AtomicBoolean(true);
 
-    public void start(){
+    public void start() {
         worker = new Thread(this);
         worker.start();
     }
 
-    public void stop(){
+    public void stop() {
         currentLocation.getAvailable().release();
         currentLocation.depart(this);
         running.set(false);
@@ -65,76 +66,78 @@ public abstract class Airplane extends Vehicle {
 
     @Override
     public void run() {
-        setState(AirplaneState.travelling);
+        setStatus(AirplaneStatus.letEnterPath);
         nextLanding = path.get(1);
         currentLocation = path.get(0);
         path.remove(0);
         path.remove(0);
-        for (;;) {
-            System.out.println(airPathsGraph.getListOfAirports().get(1).getAvailable().availablePermits());
-            System.out.println(getState());
-            //System.out.println("running");
-            if(!running.get()){
-                System.out.println("thread stopped");
+        for (; ; ) {
+            airPathsGraph.printMexico_Sao();
+            if (!running.get()) {
                 break;
             }
-            switch (getState()) {
+            switch (getStatus()) {
                 case emergency -> {
-                    System.out.println("emergency");
+                    airPathsGraph.releasePath(currentLocation, nextLanding);
                     nextLanding = path.get(0);
                     destination = path.get(0);
                     path.clear();
-                    setState(AirplaneState.travelling);
+                    setStatus(AirplaneStatus.travelling);
+                }
+                case letEnterPath -> {
+                    if (airPathsGraph.letAirplaneEnterPath(currentLocation, nextLanding)) {
+                        setStatus(AirplaneStatus.travelling);
+                    }
                 }
                 case travelling -> {
                     Boolean arrived = moveToPoint(getTimeFrame(), nextLanding, 5);
                     if (arrived) {
+                        previousLocation = currentLocation;
                         currentLocation = nextLanding;
-                        if (currentLocation == destination){
-                            setState(AirplaneState.arrivedAtDestination);
-                        }else{
-                            nextLanding=path.get(0);
+                        if (currentLocation == destination) {
+                            setStatus(AirplaneStatus.arrivedAtDestination);
+                        } else {
+                            nextLanding = path.get(0);
                             path.remove(0);
-                            setState(AirplaneState.waitingToBeLetIn);
+                            setStatus(AirplaneStatus.waitingToBeLetIn);
                         }
                     }
                 }
                 case waitingToBeLetIn -> {
                     if (currentLocation.getAvailable().tryAcquire()) {
+                        airPathsGraph.releasePath(previousLocation, currentLocation);
                         if ((currentLocation instanceof MilitaryAirport && this instanceof MilitaryAirplane) || (currentLocation instanceof CivilianAirport && this instanceof CivilianAirplane)) {
                             currentLocation.land(this);
                         }
-                        setState(AirplaneState.arrived);
+                        setStatus(AirplaneStatus.arrivedAtCheckpoint);
                     }
                 }
-                case arrived -> {
-                    if(moveToPoint(getTimeFrame(), currentLocation, 0.1)) {
+                case arrivedAtCheckpoint -> {
+                    if (moveToPoint(getTimeFrame(), currentLocation, 0.1)) {
                         Boolean occupying = occupyCrossing(currentLocation);
                         if (!occupying) {
-                            setState(AirplaneState.travelling);
+                            setStatus(AirplaneStatus.letEnterPath);
                         }
                     }
                 }
                 case arrivedAtDestination -> {
-                    if(destination.getAvailable().tryAcquire()) {
-                        System.out.println("acquired from: ");
-                        System.out.println(destination.getAvailable().availablePermits());
-                        System.out.println(destination);
+                    if (destination.getAvailable().tryAcquire()) {
+                        airPathsGraph.releasePath(previousLocation, currentLocation);
                         this.setX(destination.getX());
                         this.setY(destination.getY());
                         destination.land(this);
-                        setState(AirplaneState.waitingForDestination);
+                        setStatus(AirplaneStatus.waitingForDestination);
                     }
                 }
-                case waitingForDestination ->{
-                    if(getPath().size()>0){
-                        destination = path.get(path.size()-1);
+                case waitingForDestination -> {
+                    if (getPath().size() > 0) {
+                        destination = path.get(path.size() - 1);
                         path.remove(0); //first element of path is current location which is already set up correctly
                         nextLanding = path.get(0); //get next landing
                         path.remove(0); //remove next landing from path
                         currentLocation.getAvailable().release();
                         currentLocation.depart(this);
-                        setState(AirplaneState.travelling);
+                        setStatus(AirplaneStatus.letEnterPath);
                     }
                 }
             }
@@ -147,35 +150,35 @@ public abstract class Airplane extends Vehicle {
 
     }
 
-    public Airplane(double x, double y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, double maxSpeed, List<Airport> path) {
+    public Airplane(double x, double y, int id, int amountOfStaff, Airport destination, double maxSpeed, List<Airport> path, AirPathsGraph airPathsGraph) {
         super(x, y, id, maxSpeed);
         this.amountOfStaff = amountOfStaff;
-        this.currentFuel = currentFuel;
-        this.maxFuel = maxFuel;
+        this.currentFuel = 1000;
+        this.maxFuel = 1000;
         this.path = path;
-        if (path.isEmpty()) {
-            this.nextLanding = null;
-        } else {
-            this.nextLanding = path.get(0);
-        }
         this.destination = destination;
+        this.airPathsGraph = airPathsGraph;
+    }
+
+    @Override
+    public void reduceFuel(double value) {
+        this.currentFuel -= value;
     }
 
     @Override
     public String getInfo() {
         return
                 super.getInfo() +
-                        "\nState: " + this.getState() +
-                        "\nNumber of staff: " + this.getAmountOfStaff() +
-                        "\nCurrent fuel: " + this.getCurrentFuel() +
-                        "\nMax fuel: " + this.getMaxFuel() +
-                        "\nRoute: " + this.getPath() +
+                        "\nStatus: " + this.getStatus() +
+                        "\nDestination: " + this.getDestination() +
                         "\nNextLanding: " + this.getNextLanding() +
-                        "\nSpeed: " + this.getMaxSpeed() + " units" +
-                        "\nDestination: " + this.getDestination();
+                        "\nFurther route: " + this.getPath() +
+                        "\nAmount of staff: " + this.getAmountOfStaff() +
+                        "\nMax Speed: " + this.getMaxSpeed() + " units" +
+                        "\nCurrent fuel [gallons]: " + String.format("%,.2f", this.getCurrentFuel() / 12); //to make the numbers slightly more realistic
     }
 
-    public Airport getCurrentLocation(){
+    public Airport getCurrentLocation() {
         return currentLocation;
     }
 
@@ -224,11 +227,11 @@ public abstract class Airplane extends Vehicle {
         this.destination = destination;
     }
 
-    public AirplaneState getState() {
-        return airplaneState;
+    public AirplaneStatus getStatus() {
+        return status;
     }
 
-    public void setState(AirplaneState airplaneState) {
-        this.airplaneState = airplaneState;
+    public void setStatus(AirplaneStatus airplaneStatus) {
+        this.status = airplaneStatus;
     }
 }

@@ -1,6 +1,6 @@
 package vehicles;
 
-import enums.ShipState;
+import enums.ShipStatus;
 import others.Point;
 import others.SeaPathNode;
 
@@ -14,15 +14,15 @@ public abstract class Ship extends Vehicle {
     private SeaPathNode destination;
     private SeaPathNode previousLocation = new SeaPathNode(new Point(0, 0), 1);
 
-    public ShipState getState() {
-        return state;
+    public ShipStatus getStatus() {
+        return status;
     }
 
-    public void setState(ShipState state) {
-        this.state = state;
+    public void setStatus(ShipStatus status) {
+        this.status = status;
     }
 
-    private ShipState state;
+    private ShipStatus status;
 
 
     public Ship(double x, double y, int id, double maxSpeed, SeaPathNode startingLocationNode) {
@@ -56,8 +56,8 @@ public abstract class Ship extends Vehicle {
         do {
             newDestination = currentLocation.getConnections().get(random.nextInt(currentLocation.getConnections().size()));
 
-        } while (newDestination.getNode().equals(previousLocation.getNode()) || newDestination.getNode().equals(currentLocation.getNode()));
-        this.setState(ShipState.travelling);
+        } while (newDestination.getNode().equals(previousLocation.getNode()));
+        this.setStatus(ShipStatus.travelling);
         return newDestination;
     }
 
@@ -70,7 +70,7 @@ public abstract class Ship extends Vehicle {
     }
 
     public void stop(){
-        if(getState() == ShipState.arrived){
+        if(getStatus() == ShipStatus.arrived){
             currentLocation.getAvailable().release();
         }
         running.set(false);
@@ -79,31 +79,32 @@ public abstract class Ship extends Vehicle {
     @Override
     public void run() {
         for (;;) {
+            System.out.println(worker.getId());
             //System.out.println("running");
             if(!running.get()){
                 System.out.println("thread stopped");
                 break;
             };
-            switch (getState()) {
+            switch (getStatus()) {
                 case travelling -> {
                     Boolean arrived = moveToPoint(getTimeFrame(), destination.getNode(), 5);
                     if (arrived) {
                         previousLocation = currentLocation;
                         currentLocation = destination;
                         destination = getDestination(currentLocation);
-                        setState(ShipState.waiting);
+                        setStatus(ShipStatus.waiting);
                     }
                 }
                 case waiting -> {
                     if (currentLocation.getAvailable().tryAcquire()) {
-                        setState(ShipState.arrived);
+                        setStatus(ShipStatus.arrived);
                     }
                 }
                 case arrived -> {
                     if(moveToPoint(getTimeFrame(), currentLocation.getNode(), 0.1)) {
                         Boolean occupying = occupyCrossing(currentLocation);
                         if (!occupying) {
-                            setState(ShipState.travelling);
+                            setStatus(ShipStatus.travelling);
                         }
                     }
                 }
@@ -120,7 +121,7 @@ public abstract class Ship extends Vehicle {
     public String getInfo() {
         return
                 super.getInfo() +
-                        "\nState: " + this.getState() +
+                        "\nState: " + this.getStatus() +
                         "\nSpeed: " + this.getMaxSpeed() + " units";
     }
 

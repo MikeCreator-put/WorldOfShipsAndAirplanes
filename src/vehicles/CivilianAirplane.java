@@ -1,6 +1,7 @@
 package vehicles;
 
 import airports.Airport;
+import others.AirPathsGraph;
 
 import java.util.List;
 import java.util.Random;
@@ -10,8 +11,8 @@ public class CivilianAirplane extends Airplane {
     private int maxPassengers;
     private int currentPassengers;
 
-    public CivilianAirplane(double x, double y, int id, int amountOfStaff, double currentFuel, double maxFuel, Airport destination, int maxPassengers, int currentPassengers, double speed, List<Airport> path) {
-        super(x, y, id, amountOfStaff, currentFuel, maxFuel, destination, speed, path);
+    public CivilianAirplane(double x, double y, int id, int amountOfStaff, Airport destination, int maxPassengers, int currentPassengers, double speed, List<Airport> path, AirPathsGraph airPathsGraph) {
+        super(x, y, id, amountOfStaff, destination, speed, path, airPathsGraph);
         this.maxPassengers = maxPassengers;
         this.currentPassengers = currentPassengers;
     }

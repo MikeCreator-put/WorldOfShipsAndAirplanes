@@ -22,6 +22,7 @@ public abstract class Vehicle extends Point implements Runnable {
         if (normalized.getMagnitude() + safeDistance < vector.getMagnitude()) {
             this.setX(this.getX() + normalized.getX());
             this.setY(this.getY() + normalized.getY());
+            reduceFuel(normalized.getMagnitude());
             return false;
         } else {
             normalized.normalize();
@@ -31,6 +32,8 @@ public abstract class Vehicle extends Point implements Runnable {
             return true;
         }
     }
+
+    public void reduceFuel(double value){ }
 
     private final double timeframe = 0.005;
 

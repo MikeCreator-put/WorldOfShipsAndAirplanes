@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import others.AirPathsGraph;
+import others.Entities;
 import others.Point;
 import others.SeaPathNode;
 import vehicles.*;
@@ -193,6 +194,7 @@ public class ControlPanelController {
                 entities.removeShip((Ship) selectedVehicle);
             }
             if (selectedVehicle instanceof Airplane) {
+                entities.getAirPathsGraph().releasePath(((Airplane)selectedVehicle).getCurrentLocation(),((Airplane)selectedVehicle).getNextLanding());
                 ((Airplane) selectedVehicle).stop();
                 entities.removeAirplane((Airplane) selectedVehicle);
             }
@@ -555,7 +557,7 @@ public class ControlPanelController {
             } else { //it is a Military Ship
                 MilitaryShip creator = (MilitaryShip) startingLocationComboBox.getValue();
                 List<Airport> path = entities.getAirPathsGraph().getPathDijkstra(findNearestAirport(creator, entities.getListOfAirports()), destination);
-                path.add(0, new MilitaryAirport(creator.getX(), creator.getY(), "Military Ship, id: " + String.valueOf(creator.getId()), 1, new ArrayList<>()));
+                path.add(0, new MilitaryAirport(creator.getX(), creator.getY(), "Military Ship, id: " + String.valueOf(creator.getId()), 1));
                 newAirplane = creator.createPlane(id, destination, amountOfStaff, speed, path, entities.getAirPathsGraph());
             }
             entities.addAirplane(newAirplane);

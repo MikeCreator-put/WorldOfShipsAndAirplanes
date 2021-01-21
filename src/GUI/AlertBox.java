@@ -8,8 +8,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-
+/**
+ * Represents alert box popping up after an error.
+ */
 public class AlertBox {
+    /**
+     * Creates new popup window with an error message provided in parameter.
+     *
+     * @param message The window's error message.
+     */
     public static void display(String message) {
         Stage thisStage = new Stage();
 

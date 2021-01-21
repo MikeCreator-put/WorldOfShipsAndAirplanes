@@ -66,13 +66,12 @@ public abstract class Airplane extends Vehicle {
 
     @Override
     public void run() {
-        setStatus(AirplaneStatus.letEnterPath);
+        setStatus(AirplaneStatus.askForPermissionToEnterPath);
         nextLanding = path.get(1);
         currentLocation = path.get(0);
         path.remove(0);
         path.remove(0);
         for (; ; ) {
-            airPathsGraph.printMexico_Sao();
             if (!running.get()) {
                 break;
             }
@@ -84,7 +83,7 @@ public abstract class Airplane extends Vehicle {
                     path.clear();
                     setStatus(AirplaneStatus.travelling);
                 }
-                case letEnterPath -> {
+                case askForPermissionToEnterPath -> {
                     if (airPathsGraph.letAirplaneEnterPath(currentLocation, nextLanding)) {
                         setStatus(AirplaneStatus.travelling);
                     }
@@ -116,7 +115,7 @@ public abstract class Airplane extends Vehicle {
                     if (moveToPoint(getTimeFrame(), currentLocation, 0.1)) {
                         Boolean occupying = occupyCrossing(currentLocation);
                         if (!occupying) {
-                            setStatus(AirplaneStatus.letEnterPath);
+                            setStatus(AirplaneStatus.askForPermissionToEnterPath);
                         }
                     }
                 }
@@ -137,7 +136,7 @@ public abstract class Airplane extends Vehicle {
                         path.remove(0); //remove next landing from path
                         currentLocation.getAvailable().release();
                         currentLocation.depart(this);
-                        setStatus(AirplaneStatus.letEnterPath);
+                        setStatus(AirplaneStatus.askForPermissionToEnterPath);
                     }
                 }
             }

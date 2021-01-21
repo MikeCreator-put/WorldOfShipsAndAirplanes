@@ -2,10 +2,9 @@ package GUI;
 
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import others.Point;
+import others.Entities;
 import airports.Airport;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -87,8 +86,8 @@ public class MapController {
 
         root.getChildren().clear();
         root.setPrefSize(1005.0, 500.0);
-        ImageView map = new ImageView(new Image("map.png"));
-        ImageView legend = new ImageView(new Image("mapLegend.png"));
+        ImageView map = new ImageView("map.png");
+        ImageView legend = new ImageView("mapLegend.png");
         legend.setX(0);
         legend.setY(400);
         root.getChildren().add(map);
@@ -99,7 +98,7 @@ public class MapController {
         try {
             drawSeaNodes(entities.getListOfSeaPathNodes(), Color.AQUAMARINE);
             drawSeaPaths(entities, 0.5, 0.5, Color.AQUAMARINE);
-            drawAirPaths(entities, 0.5, 0.5, Color.GRAY);
+            drawAirPaths(entities, 0.5, 0.5, Color.BLACK, Color.RED);
             drawAirports(entities.getListOfCivilianAirports(), Color.BLUE);
             drawAirports(entities.getListOfMilitaryAirports(), Color.RED);
             drawAirplanes(entities.getListofCivilianAirplanes(), Color.BLUE);
@@ -149,17 +148,21 @@ public class MapController {
         }
     }
 
-    private void drawAirPaths(Entities entities, double opacity, double strokeWidth, Color color) {
+    private void drawAirPaths(Entities entities, double opacity, double strokeWidth, Color color1, Color color2) {
         for(Airport start : entities.getAirPathsGraph().getAdjList().keySet()){
             double startX = start.getX();
             double startY = start.getY();
-            for(Airport dest : entities.getAirPathsGraph().getAdjList().get(start)){
-                double endX = dest.getX();
-                double endY = dest.getY();
-                Line airPath = new Line(startX,startY, endX, endY);
+            for (int i = 0; i < entities.getAirPathsGraph().getAdjList().get(start).size(); i++) {
+                double endX = entities.getAirPathsGraph().getAdjList().get(start).get(i).getX();
+                double endY = entities.getAirPathsGraph().getAdjList().get(start).get(i).getY();
+                Line airPath = new Line(startX,startY,endX,endY);
                 airPath.setOpacity(opacity);
                 airPath.setStrokeWidth(strokeWidth);
-                airPath.setStroke(color);
+                if(entities.getAirPathsGraph().drawingHelperList().get(start).get(i)){
+                    airPath.setStroke(color2);
+                }else{
+                    airPath.setStroke(color1);
+                }
                 root.getChildren().add(airPath);
             }
         }
@@ -190,7 +193,6 @@ public class MapController {
 
     private static class MapSeapathNode extends Circle {
         SeaPathNode seaPathNode;
-
         MapSeapathNode(int radius, Color color, double opacity, SeaPathNode seaPathNode) {
             super(seaPathNode.getNode().getX(), seaPathNode.getNode().getY(), radius);
             this.seaPathNode = seaPathNode;
@@ -208,7 +210,6 @@ public class MapController {
 
     private static class MapShip extends Circle {
         Ship ship;
-
         MapShip(int radius, Color color, Ship ship) {
             super(ship.getX(),ship.getY(),radius);
             this.ship = ship;

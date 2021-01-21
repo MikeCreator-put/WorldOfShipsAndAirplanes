@@ -1,15 +1,23 @@
 package airports;
 
-import vehicles.Airplane;
-
-import java.util.List;
-
+/**
+ * Represents crossing of paths in the air.
+ */
 public class CrossingAirport extends Airport {
-    public CrossingAirport(double x, double y, String name, int maxCapacity, List<Airplane> airplanesIn) {
-        super(x, y, name, maxCapacity, airplanesIn);
+    /**
+     * Creates path's crossing with specified x and y coordinates, name and maximum capacity.
+     *
+     * @param x           The crossing's X coordinate.
+     * @param y           The crossing's Y coordinate.
+     * @param name        The crossing's name.
+     * @param maxCapacity The crossing's maximum capacity.
+     */
+    public CrossingAirport(double x, double y, String name, int maxCapacity) {
+        super(x, y, name, maxCapacity);
     }
+
     @Override
-    public String toString(){
+    public String toString() {
         return getName();
     }
 }

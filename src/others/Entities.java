@@ -1,4 +1,4 @@
-package GUI;
+package others;
 
 import airports.Airport;
 import airports.CivilianAirport;

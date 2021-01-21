@@ -63,19 +63,19 @@ class Edge {
 
 
 public class AirPathsGraph {
-    private Airport tokyo = new CivilianAirport(811, 153, "Tokyo", 54, new ArrayList<>());
-    private Airport mexico = new CivilianAirport(111, 213, "Mexico City", 3, new ArrayList<>());
-    private Airport atlanta = new CivilianAirport(160, 160, "Atlanta", 78, new ArrayList<>());
-    private Airport buenos_aires = new CivilianAirport(239, 403, "Buenos Aires", 44, new ArrayList<>());
-    private Airport paris = new CivilianAirport(419, 109, "Paris", 38, new ArrayList<>());
-    private Airport dubai = new CivilianAirport(573, 193, "Dubai", 66, new ArrayList<>());
-    private Airport melbourne = new CivilianAirport(824, 412, "Melbourne", 23, new ArrayList<>());
-    private Airport cape_town = new MilitaryAirport(463, 396, "Cape Town", 8, new ArrayList<>());
-    private Airport sao_louis = new MilitaryAirport(257, 285, "Sao Louis", 10, new ArrayList<>());
-    private Airport moscow = new MilitaryAirport(524, 88, "Moscow", 31, new ArrayList<>());
-    private Airport crossing1 = new CrossingAirport(285, 183, "crossing1", 1, new ArrayList<>());
-    private Airport crossing2 = new CrossingAirport(401, 285, "crossing2", 1, new ArrayList<>());
-    private Airport crossing3 = new CrossingAirport(641, 214, "crossing3", 1, new ArrayList<>());
+    private Airport tokyo = new CivilianAirport(811, 153, "Tokyo", 54);
+    private Airport mexico = new CivilianAirport(111, 213, "Mexico City", 3);
+    private Airport atlanta = new CivilianAirport(160, 160, "Atlanta", 78);
+    private Airport buenos_aires = new CivilianAirport(239, 403, "Buenos Aires", 44);
+    private Airport paris = new CivilianAirport(419, 109, "Paris", 38);
+    private Airport dubai = new CivilianAirport(573, 193, "Dubai", 66);
+    private Airport melbourne = new CivilianAirport(824, 412, "Melbourne", 23);
+    private Airport cape_town = new MilitaryAirport(463, 396, "Cape Town", 8);
+    private Airport sao_louis = new MilitaryAirport(257, 285, "Sao Louis", 10);
+    private Airport moscow = new MilitaryAirport(524, 88, "Moscow", 31);
+    private Airport crossing1 = new CrossingAirport(285, 183, "crossing1", 1);
+    private Airport crossing2 = new CrossingAirport(401, 285, "crossing2", 1);
+    private Airport crossing3 = new CrossingAirport(641, 214, "crossing3", 1);
 
     private Vertex tokyoV = new Vertex(tokyo);
     private Vertex mexicoV = new Vertex(mexico);
@@ -94,6 +94,7 @@ public class AirPathsGraph {
     private Map<Airport, Vertex> mapAirportsToVertexes;
     private List<Vertex> listOfVertexes = new ArrayList<>(List.of(tokyoV, mexicoV, atlantaV, buenos_airesV, parisV, dubaiV, melbourneV, cape_townV, sao_louisV, moscowV, crossing1V, crossing2V, crossing3V));
     private Map<Airport, List<Airport>> adjList;
+    private Map<Airport, List<Boolean>> drawingHelperList;
 
     public AirPathsGraph() {
         tokyoV.adjacencies = new Edge[]{
@@ -126,7 +127,7 @@ public class AirPathsGraph {
                 new Edge(buenos_airesV, cape_town.distanceTo(buenos_aires)),
                 new Edge(crossing2V, cape_town.distanceTo(crossing2))};
         sao_louisV.adjacencies = new Edge[]{
-                new Edge(sao_louisV, sao_louis.distanceTo(buenos_aires)),
+                new Edge(buenos_airesV, sao_louis.distanceTo(buenos_aires)),
                 new Edge(crossing2V, sao_louis.distanceTo(crossing2)),
                 new Edge(mexicoV, sao_louis.distanceTo(mexico),true)};
         moscowV.adjacencies = new Edge[]{
@@ -149,17 +150,21 @@ public class AirPathsGraph {
                 new Edge(melbourneV, crossing3.distanceTo(melbourne))};
 
         adjList = new HashMap<>();
+        drawingHelperList = new HashMap<>();
 
         for(Vertex vertex : listOfVertexes){
             adjList.putIfAbsent(vertex.getAirport(), new ArrayList<>());
+            drawingHelperList.putIfAbsent(vertex.getAirport(), new ArrayList<>());
         }
 
         for(Vertex start : listOfVertexes){
             for(Edge dest : start.adjacencies){
                 adjList.get(start.getAirport()).add(dest.getTarget().getAirport());
-                adjList.get(dest.getTarget().getAirport()).add(start.getAirport());
+                drawingHelperList.get(start.getAirport()).add(dest.oneWay);
             }
         }
+
+
 
         mapAirportsToVertexes = new HashMap<>();
         mapAirportsToVertexes.put(tokyo, tokyoV);
@@ -175,16 +180,6 @@ public class AirPathsGraph {
         mapAirportsToVertexes.put(crossing1, crossing1V);
         mapAirportsToVertexes.put(crossing2, crossing2V);
         mapAirportsToVertexes.put(crossing3, crossing3V);
-    }
-
-    public void printMexico_Sao(){
-        for(Edge edge : mexicoV.adjacencies){
-            if(edge.target == sao_louisV){
-                System.out.println(edge.occupied);
-                System.out.println(edge.airplanesOnIt);
-
-            }
-        }
     }
 
     public Boolean letAirplaneEnterPath(Airport start, Airport end){
@@ -314,4 +309,5 @@ public class AirPathsGraph {
     public Map<Airport, List<Airport>> getAdjList() {
         return adjList;
     }
+    public Map<Airport, List<Boolean>> drawingHelperList(){return drawingHelperList;}
 }

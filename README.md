@@ -19,10 +19,11 @@ by pressing view map button at the top right corner of the control panel.
 The user can select any entity by either clicking on its label in the tree view visible on the left side of the
 control panel or by clicking it on the map.
 
-While any object is selected, it's live information will be displayed at the control panel.
+While any object is selected, its live information will be displayed at the control panel.
 While any ship is selected, there will also be a button allowing the user to delete it.
 While an airplane is selected, two extra buttons will be displayed. One will allow the user to call an
-emergency, which will cause the airplane to abort it's path and fly to the nearest airport that it shares
+emergency, which will cause the airplane to abort it
+s path and fly to the nearest airport that it shares
 category with. Second one will allow the user to change the airplane's destination. In order to do so
 the user has to select new location from the combo box and confirm the choice by pressing 'New destination' button.
 

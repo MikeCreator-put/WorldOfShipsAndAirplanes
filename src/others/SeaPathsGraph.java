@@ -3,8 +3,14 @@ package others;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the network of connections at sea.
+ */
 public class SeaPathsGraph {
 
+    /**
+     * Creates new network of connections at sea.
+     */
     public SeaPathsGraph(){
         setNodes();
     }
@@ -25,7 +31,7 @@ public class SeaPathsGraph {
     private final SeaPathNode seaPathNode14 = new SeaPathNode(new Point(213, 187),1000);
     private final SeaPathNode seaPathNode15 = new SeaPathNode(new Point(253, 245),1000);
 
-    void setNodes() {
+    private void setNodes() {
         seaPathNode1.setConnections(new ArrayList<>(List.of(seaPathNode2, seaPathNode5)));
         seaPathNode2.setConnections(new ArrayList<>(List.of(seaPathNode1, seaPathNode3)));
         seaPathNode3.setConnections(new ArrayList<>(List.of(seaPathNode2, seaPathNode4)));
@@ -42,6 +48,11 @@ public class SeaPathsGraph {
         seaPathNode14.setConnections(new ArrayList<>(List.of(seaPathNode13, seaPathNode15)));
         seaPathNode15.setConnections(new ArrayList<>(List.of(seaPathNode10, seaPathNode14)));
     }
+
+    /**
+     * Gets every turn and crossing.
+     * @return List representing every turn and crossing at sea.
+     */
     public List<SeaPathNode> getListOfNodes(){
         return new ArrayList<>(List.of(seaPathNode1, seaPathNode2, seaPathNode3, seaPathNode4, seaPathNode5, seaPathNode6, seaPathNode7, seaPathNode8, seaPathNode9, seaPathNode10, seaPathNode11, seaPathNode12, seaPathNode13, seaPathNode14, seaPathNode15));
     }

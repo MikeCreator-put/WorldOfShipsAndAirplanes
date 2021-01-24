@@ -7,7 +7,7 @@ import vehicles.CivilianAirplane;
 import java.util.List;
 
 /**
- * Represents civilian airport.
+ * Represents a civilian airport.
  */
 public class CivilianAirport extends Airport {
 
@@ -50,7 +50,7 @@ public class CivilianAirport extends Airport {
      * @param speed             The airplane's speed.
      * @param path              The airplane's path.
      * @param airPathsGraph     Graph of connections between airports.
-     * @return new CivilianAirplane entity describing civilian airplane with provided parameters.
+     * @return New CivilianAirplane entity describing civilian airplane with provided parameters.
      * @see CivilianAirplane
      */
     public Airplane createPlane(int id, Airport destination, int amountOfStaff, int maxPassengers, int currentPassengers, double speed, List<Airport> path, AirPathsGraph airPathsGraph) {

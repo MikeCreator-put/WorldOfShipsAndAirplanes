@@ -1,16 +1,28 @@
 package vehicles;
 
-import GUI.MapController;
 import enums.Companies;
 import others.SeaPathNode;
 
-import java.util.List;
-
+/**
+ * Represents a civilian ship.
+ */
 public class CivilianShip extends Ship {
-    private int currentPassengers;
-    private int maxPassengers;
-    private Companies company;
+    private final int currentPassengers;
+    private final int maxPassengers;
+    private final Companies company;
 
+    /**
+     * Creates new civilian ship with specified x and y coordinates, id, maximum speed, current amount of passengers, maximum amount of passengers, company, and starting location.
+     *
+     * @param x                    The ship's X coordinate.
+     * @param y                    The ship's Y coordinate.
+     * @param id                   The ship's id.
+     * @param maxSpeed             The ship's maximum speed.
+     * @param currentPassengers    The ship's current amount of passengers.
+     * @param maxPassengers        The ship's maximum amount of passengers.
+     * @param company              Name of the ship's company.
+     * @param startingLocationNode The ship's starting location vertex of the sea connections graph.
+     */
     public CivilianShip(double x, double y, int id, double maxSpeed, int currentPassengers, int maxPassengers, Companies company, SeaPathNode startingLocationNode) {
         super(x, y, id, maxSpeed, startingLocationNode);
         this.currentPassengers = currentPassengers;
@@ -23,6 +35,11 @@ public class CivilianShip extends Ship {
         return "Civilian Ship, id: " + getId();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return String representing information about the ship.
+     */
     @Override
     public String getInfo() {
         return "Civilian Ship, id: " + this.getId() +
@@ -32,28 +49,30 @@ public class CivilianShip extends Ship {
                 "\nCompany name: " + this.getCompany();
     }
 
-
+    /**
+     * Gets current amount of passengers.
+     *
+     * @return Integer representing current amount of passengers on the ship.
+     */
     public int getCurrentPassengers() {
         return currentPassengers;
     }
 
-    public void setCurrentPassengers(int currentPassengers) {
-        this.currentPassengers = currentPassengers;
-    }
-
+    /**
+     * Gets maximum amount of passengers.
+     *
+     * @return Integer representing maximum amount of passengers on the ship.
+     */
     public int getMaxPassengers() {
         return maxPassengers;
     }
 
-    public void setMaxPassengers(int maxPassengers) {
-        this.maxPassengers = maxPassengers;
-    }
-
+    /**
+     * Gets name of the ship's company.
+     *
+     * @return Companies value representing the name of the ship's company.
+     */
     public Companies getCompany() {
         return company;
-    }
-
-    public void setCompany(Companies company) {
-        this.company = company;
     }
 }

@@ -1,7 +1,7 @@
 package airports;
 
 /**
- * Represents crossing of paths in the air.
+ * Represents a crossing of paths in the air.
  */
 public class CrossingAirport extends Airport {
     /**

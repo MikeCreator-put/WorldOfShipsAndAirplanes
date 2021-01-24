@@ -9,7 +9,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- * Represents alert box popping up after an error.
+ * Represents an alert box popping up after an error.
  */
 public class AlertBox {
     /**

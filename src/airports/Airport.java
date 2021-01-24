@@ -12,7 +12,7 @@ import java.util.concurrent.Semaphore;
  * Represents an airport.
  */
 public abstract class Airport extends Point {
-    private String name;
+    private final String name;
     private final int maxCapacity;
     private int currentCapacity;
     private final List<Airplane> airplanesIn;
@@ -38,7 +38,7 @@ public abstract class Airport extends Point {
     /**
      * Gets information about the airport.
      *
-     * @return A string representing information about the airport.
+     * @return String representing information about the airport.
      */
     @Override
     public String getInfo() {
@@ -52,7 +52,7 @@ public abstract class Airport extends Point {
     /**
      * Gets the airport's semaphore
      *
-     * @return A semaphore which permits represent the amount of available spots for airplanes.
+     * @return Semaphore whose permits represent the amount of available spots for airplanes.
      */
     public Semaphore getAvailable() {
         return available;
@@ -61,7 +61,7 @@ public abstract class Airport extends Point {
     /**
      * Handles the situation of an airplane arriving at the airport.
      *
-     * @param airplane which is landing at the airport.
+     * @param airplane Airplane landing at the airport.
      */
     public void land(Airplane airplane) {
         currentCapacity += 1;
@@ -75,7 +75,7 @@ public abstract class Airport extends Point {
     /**
      * Handles the situation of an airplane departing from the airport.
      *
-     * @param airplane which is departing from the airport.
+     * @param airplane Airplane departing from the airport.
      */
     public void depart(Airplane airplane) {
         currentCapacity -= 1;
@@ -85,25 +85,16 @@ public abstract class Airport extends Point {
     /**
      * Gets name of the airport.
      *
-     * @return A string representing aiport's name.
+     * @return String representing airport's name.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Sets name of the airport.
-     *
-     * @param name The airport's name.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
      * Gets the airport's maximum capacity.
      *
-     * @return an integer representing the airport's maximum capacity.
+     * @return Integer representing the airport's maximum capacity.
      */
     public int getMaxCapacity() {
         return maxCapacity;
@@ -112,7 +103,7 @@ public abstract class Airport extends Point {
     /**
      * Gets the airport's current capacity.
      *
-     * @return an integer representing the airport's current capacity.
+     * @return Integer representing the airport's current capacity.
      */
     public int getCurrentCapacity() {
         return currentCapacity;
@@ -121,7 +112,7 @@ public abstract class Airport extends Point {
     /**
      * Gets the list of Airplanes currently being stationary at the airport.
      *
-     * @return a list representing airplanes currently being stationary at the airport.
+     * @return List representing airplanes currently being stationary at the airport.
      */
     public List<Airplane> getAirplanesIn() {
         return airplanesIn;

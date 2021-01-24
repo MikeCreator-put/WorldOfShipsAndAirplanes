@@ -10,6 +10,9 @@ import java.util.*;
 //Dijkstra algorithm from https://stackoverflow.com/questions/17480022/java-find-shortest-path-between-2-points-in-a-distance-weighted-map
 //Classes modified for purposes of my project
 
+/**
+ * Represents the vertex of the air paths graph, where the vertex is an airport.
+ */
 class Vertex implements Comparable<Vertex> {
     public final String name;
     public Edge[] adjacencies;
@@ -17,25 +20,40 @@ class Vertex implements Comparable<Vertex> {
     public Vertex previous;
     public Airport airport;
 
+    /**
+     * Creates new vertex representing a given airport.
+     *
+     * @param airport Airport to be represented by the vertex.
+     */
     public Vertex(Airport airport) {
         this.airport = airport;
         this.name = airport.getName();
     }
-    public Edge[] getAdjacencies(){
-        return adjacencies;
-    }
 
-    public String toString() {
-        return name;
-    }
-
+    /**
+     * Compares the minDistance variable of two vertexes.
+     * First one is taken from the vertex this method is called upon and the second one taken from the vertex passed as parameter.
+     *
+     * @param other Vertex whose minDistance value will be compared.
+     * @return Integer representing information which minDistance is greater.
+     */
     public int compareTo(Vertex other) {
         return Double.compare(minDistance, other.minDistance);
     }
 
-    public Airport getAirport(){return airport;}
+    /**
+     * Gets the airport of a vertex.
+     *
+     * @return Airport which is represented by the vertex.
+     */
+    public Airport getAirport() {
+        return airport;
+    }
 }
 
+/**
+ * Represents a connection between two vertexes (airports).
+ */
 class Edge {
     public final Vertex target;
     public final double weight;
@@ -44,58 +62,82 @@ class Edge {
     public Boolean isStart = false;
     public int airplanesOnIt = 0;
 
-    public Edge(Vertex argTarget, double argWeight){
+    /**
+     * Creates a bidirectional connection to a given vertexes (airport).
+     *
+     * @param argTarget Destination of the path.
+     * @param argWeight Distance needed to travelled in order to reach the destination.
+     */
+    public Edge(Vertex argTarget, double argWeight) {
         this.target = argTarget;
         this.weight = argWeight;
         this.oneWay = false;
     }
+
+    /**
+     * Creates a connection to a given vertex (airport) which can be either bidirectional or one-way.
+     *
+     * @param argTarget Destination of the path.
+     * @param argWeight Distance needed to be travelled in order to reach the destination.
+     * @param oneWay    Boolean variable which decides if the path is bidirectional or one-way.
+     */
     public Edge(Vertex argTarget, double argWeight, Boolean oneWay) {
         this.target = argTarget;
         this.weight = argWeight;
         this.oneWay = oneWay;
     }
 
-    public Vertex getTarget(){
+    /**
+     * Gets the destination of the path.
+     *
+     * @return The vertex representing destination of the path.
+     */
+    public Vertex getTarget() {
         return target;
     }
 }
 
-
-
+/**
+ * Represents the network of connections between airports.
+ */
 public class AirPathsGraph {
-    private Airport tokyo = new CivilianAirport(811, 153, "Tokyo", 54);
-    private Airport mexico = new CivilianAirport(111, 213, "Mexico City", 3);
-    private Airport atlanta = new CivilianAirport(160, 160, "Atlanta", 78);
-    private Airport buenos_aires = new CivilianAirport(239, 403, "Buenos Aires", 44);
-    private Airport paris = new CivilianAirport(419, 109, "Paris", 38);
-    private Airport dubai = new CivilianAirport(573, 193, "Dubai", 66);
-    private Airport melbourne = new CivilianAirport(824, 412, "Melbourne", 23);
-    private Airport cape_town = new MilitaryAirport(463, 396, "Cape Town", 8);
-    private Airport sao_louis = new MilitaryAirport(257, 285, "Sao Louis", 10);
-    private Airport moscow = new MilitaryAirport(524, 88, "Moscow", 31);
-    private Airport crossing1 = new CrossingAirport(285, 183, "crossing1", 1);
-    private Airport crossing2 = new CrossingAirport(401, 285, "crossing2", 1);
-    private Airport crossing3 = new CrossingAirport(641, 214, "crossing3", 1);
+    private final Airport tokyo = new CivilianAirport(811, 153, "Tokyo", 54);
+    private final Airport mexico = new CivilianAirport(111, 213, "Mexico City", 3);
+    private final Airport atlanta = new CivilianAirport(160, 160, "Atlanta", 78);
+    private final Airport buenos_aires = new CivilianAirport(239, 403, "Buenos Aires", 44);
+    private final Airport paris = new CivilianAirport(419, 109, "Paris", 38);
+    private final Airport dubai = new CivilianAirport(573, 193, "Dubai", 66);
+    private final Airport melbourne = new CivilianAirport(824, 412, "Melbourne", 23);
+    private final Airport cape_town = new MilitaryAirport(463, 396, "Cape Town", 8);
+    private final Airport sao_louis = new MilitaryAirport(257, 285, "Sao Louis", 10);
+    private final Airport moscow = new MilitaryAirport(524, 88, "Moscow", 31);
+    private final Airport crossing1 = new CrossingAirport(285, 183, "crossing1", 1);
+    private final Airport crossing2 = new CrossingAirport(401, 285, "crossing2", 1);
+    private final Airport crossing3 = new CrossingAirport(641, 214, "crossing3", 1);
 
-    private Vertex tokyoV = new Vertex(tokyo);
-    private Vertex mexicoV = new Vertex(mexico);
-    private Vertex atlantaV = new Vertex(atlanta);
-    private Vertex buenos_airesV = new Vertex(buenos_aires);
-    private Vertex parisV = new Vertex(paris);
-    private Vertex dubaiV = new Vertex(dubai);
-    private Vertex melbourneV = new Vertex(melbourne);
-    private Vertex cape_townV = new Vertex(cape_town);
-    private Vertex sao_louisV = new Vertex(sao_louis);
-    private Vertex moscowV = new Vertex(moscow);
-    private Vertex crossing1V = new Vertex(crossing1);
-    private Vertex crossing2V = new Vertex(crossing2);
-    private Vertex crossing3V = new Vertex(crossing3);
+    private final Vertex tokyoV = new Vertex(tokyo);
+    private final Vertex mexicoV = new Vertex(mexico);
+    private final Vertex atlantaV = new Vertex(atlanta);
+    private final Vertex buenos_airesV = new Vertex(buenos_aires);
+    private final Vertex parisV = new Vertex(paris);
+    private final Vertex dubaiV = new Vertex(dubai);
+    private final Vertex melbourneV = new Vertex(melbourne);
+    private final Vertex cape_townV = new Vertex(cape_town);
+    private final Vertex sao_louisV = new Vertex(sao_louis);
+    private final Vertex moscowV = new Vertex(moscow);
+    private final Vertex crossing1V = new Vertex(crossing1);
+    private final Vertex crossing2V = new Vertex(crossing2);
+    private final Vertex crossing3V = new Vertex(crossing3);
 
-    private Map<Airport, Vertex> mapAirportsToVertexes;
-    private List<Vertex> listOfVertexes = new ArrayList<>(List.of(tokyoV, mexicoV, atlantaV, buenos_airesV, parisV, dubaiV, melbourneV, cape_townV, sao_louisV, moscowV, crossing1V, crossing2V, crossing3V));
-    private Map<Airport, List<Airport>> adjList;
-    private Map<Airport, List<Boolean>> drawingHelperList;
+    private final Map<Airport, Vertex> mapAirportsToVertexes;
+    private final Map<Airport, List<Airport>> adjList;
+    private final Map<Airport, List<Boolean>> drawingHelperList;
 
+    private final List<Vertex> listOfVertexes = new ArrayList<>(List.of(tokyoV, mexicoV, atlantaV, buenos_airesV, parisV, dubaiV, melbourneV, cape_townV, sao_louisV, moscowV, crossing1V, crossing2V, crossing3V));
+
+    /**
+     * Creates new network of connections between airports.
+     */
     public AirPathsGraph() {
         tokyoV.adjacencies = new Edge[]{
                 new Edge(melbourneV, tokyo.distanceTo(melbourne), true),
@@ -103,7 +145,7 @@ public class AirPathsGraph {
         mexicoV.adjacencies = new Edge[]{
                 new Edge(atlantaV, mexico.distanceTo(atlanta)),
                 new Edge(crossing1V, mexico.distanceTo(crossing1)),
-                new Edge(sao_louisV, mexico.distanceTo(sao_louis),true)};
+                new Edge(sao_louisV, mexico.distanceTo(sao_louis), true)};
         atlantaV.adjacencies = new Edge[]{
                 new Edge(mexicoV, atlanta.distanceTo(mexico)),
                 new Edge(crossing1V, atlanta.distanceTo(crossing1))};
@@ -129,10 +171,10 @@ public class AirPathsGraph {
         sao_louisV.adjacencies = new Edge[]{
                 new Edge(buenos_airesV, sao_louis.distanceTo(buenos_aires)),
                 new Edge(crossing2V, sao_louis.distanceTo(crossing2)),
-                new Edge(mexicoV, sao_louis.distanceTo(mexico),true)};
+                new Edge(mexicoV, sao_louis.distanceTo(mexico), true)};
         moscowV.adjacencies = new Edge[]{
                 new Edge(parisV, moscow.distanceTo(paris)),
-                new Edge(dubaiV, moscow.distanceTo(dubai),true)};
+                new Edge(dubaiV, moscow.distanceTo(dubai), true)};
         crossing1V.adjacencies = new Edge[]{
                 new Edge(atlantaV, crossing1.distanceTo(atlanta)),
                 new Edge(mexicoV, crossing1.distanceTo(mexico)),
@@ -152,19 +194,17 @@ public class AirPathsGraph {
         adjList = new HashMap<>();
         drawingHelperList = new HashMap<>();
 
-        for(Vertex vertex : listOfVertexes){
+        for (Vertex vertex : listOfVertexes) {
             adjList.putIfAbsent(vertex.getAirport(), new ArrayList<>());
             drawingHelperList.putIfAbsent(vertex.getAirport(), new ArrayList<>());
         }
 
-        for(Vertex start : listOfVertexes){
-            for(Edge dest : start.adjacencies){
-                adjList.get(start.getAirport()).add(dest.getTarget().getAirport());
-                drawingHelperList.get(start.getAirport()).add(dest.oneWay);
+        for (Vertex start : listOfVertexes) {
+            for (Edge destination : start.adjacencies) {
+                adjList.get(start.getAirport()).add(destination.getTarget().getAirport());
+                drawingHelperList.get(start.getAirport()).add(destination.oneWay);
             }
         }
-
-
 
         mapAirportsToVertexes = new HashMap<>();
         mapAirportsToVertexes.put(tokyo, tokyoV);
@@ -182,65 +222,78 @@ public class AirPathsGraph {
         mapAirportsToVertexes.put(crossing3, crossing3V);
     }
 
-    public Boolean letAirplaneEnterPath(Airport start, Airport end){
+    /**
+     * Determines if an airplane can enter the path from one airport to another.
+     *
+     * @param start The airport from which the airplane departs.
+     * @param end   The airport to which the airplane wants to travel.
+     * @return Boolean value representing the allowance to either enter the path or not.
+     */
+    public Boolean letAirplaneEnterPath(Airport start, Airport end) {
         Edge edgeFromStart = null;
         Edge edgeFromEnd = null;
         Vertex startV = mapAirportsToVertexes.get(start);
         Vertex endV = mapAirportsToVertexes.get(end);
-        for(Edge edge : startV.adjacencies){
-            if(edge.getTarget() == endV){
+        for (Edge edge : startV.adjacencies) {
+            if (edge.getTarget() == endV) {
                 edgeFromStart = edge;
             }
         }
-        for(Edge edge : endV.adjacencies){
-            if(edge.getTarget() == startV){
+        for (Edge edge : endV.adjacencies) {
+            if (edge.getTarget() == startV) {
                 edgeFromEnd = edge;
             }
         }
         assert edgeFromStart != null : "Start Edge not found";
         assert edgeFromEnd != null : "End Edge not found";
-        if(edgeFromStart.oneWay){
-            if(!edgeFromStart.occupied){
+        if (edgeFromStart.oneWay) {
+            if (!edgeFromStart.occupied) {
                 edgeFromStart.isStart = true;
                 edgeFromEnd.occupied = true;
                 edgeFromStart.occupied = true;
-                edgeFromStart.airplanesOnIt+=1;
-                edgeFromEnd.airplanesOnIt+=1;
+                edgeFromStart.airplanesOnIt += 1;
+                edgeFromEnd.airplanesOnIt += 1;
                 return true;
-            }else{
-                if(edgeFromStart.isStart){
-                    edgeFromStart.airplanesOnIt+=1;
-                    edgeFromEnd.airplanesOnIt+=1;
+            } else {
+                if (edgeFromStart.isStart) {
+                    edgeFromStart.airplanesOnIt += 1;
+                    edgeFromEnd.airplanesOnIt += 1;
                     return true;
-                }else{
+                } else {
                     return false;
                 }
             }
-        }else {
+        } else {
             return true;
         }
     }
 
-    public void releasePath(Airport start, Airport end){
+    /**
+     * Modifies certain fields to inform the program that an airplane has already left the path.
+     *
+     * @param start The airport from which the airplane departed.
+     * @param end   The airport to which the airplane arrived.
+     */
+    public void releasePath(Airport start, Airport end) {
         Edge edgeFromStart = null;
         Edge edgeFromEnd = null;
         Vertex startV = mapAirportsToVertexes.get(start);
         Vertex endV = mapAirportsToVertexes.get(end);
-        for(Edge edge : startV.adjacencies){
-            if(edge.getTarget() == endV){
+        for (Edge edge : startV.adjacencies) {
+            if (edge.getTarget() == endV) {
                 edgeFromStart = edge;
             }
         }
-        for(Edge edge : endV.adjacencies){
-            if(edge.getTarget() == startV){
+        for (Edge edge : endV.adjacencies) {
+            if (edge.getTarget() == startV) {
                 edgeFromEnd = edge;
             }
         }
         assert edgeFromStart != null : "Start Edge not found";
         assert edgeFromEnd != null : "End Edge not found";
-        edgeFromStart.airplanesOnIt-=1;
-        edgeFromEnd.airplanesOnIt-=1;
-        if(edgeFromStart.oneWay) {
+        edgeFromStart.airplanesOnIt -= 1;
+        edgeFromEnd.airplanesOnIt -= 1;
+        if (edgeFromStart.oneWay) {
             if (edgeFromStart.airplanesOnIt == 0) {
                 edgeFromStart.occupied = false;
                 edgeFromEnd.occupied = false;
@@ -273,8 +326,6 @@ public class AirPathsGraph {
         }
     }
 
-
-
     private List<Vertex> getShortestPathTo(Vertex target) {
         List<Vertex> path = new ArrayList<>();
         for (Vertex vertex = target; vertex != null; vertex = vertex.previous)
@@ -283,31 +334,53 @@ public class AirPathsGraph {
         return path;
     }
 
-    public List<Airport> getPathDijkstra(Airport start, Airport dest) {
+    /**
+     * Computes the shortest path between starting airport and chosen destination.
+     *
+     * @param start       The airport which the airplane departs.
+     * @param destination The airport to which the airplane wants to fly.
+     * @return List of airports representing the path between start and destination including both of them.
+     * @see <a href="https://stackoverflow.com/questions/17480022/java-find-shortest-path-between-2-points-in-a-distance-weighted-map">https://stackoverflow.com/questions/17480022/java-find-shortest-path-between-2-points-in-a-distance-weighted-map</a>
+     */
+    public List<Airport> getPathDijkstra(Airport start, Airport destination) {
         computePaths(mapAirportsToVertexes.get(start));
-        List<Vertex> path = getShortestPathTo(mapAirportsToVertexes.get(dest));
+        List<Vertex> path = getShortestPathTo(mapAirportsToVertexes.get(destination));
         List<Airport> pathOfAirports = new ArrayList<>();
         for (Vertex vertex : path) {
             Airport airport = vertex.getAirport();
             pathOfAirports.add(airport);
         }
-        for(Vertex vertex : listOfVertexes){
+        for (Vertex vertex : listOfVertexes) {
             vertex.minDistance = Double.POSITIVE_INFINITY;
             vertex.previous = null;
         }
         return pathOfAirports;
     }
 
-    public Map<Airport, Vertex> getMapAirportsToVertexes(){
-        return mapAirportsToVertexes;
-    }
-
+    /**
+     * Gets all of the airports from the network of connections.
+     *
+     * @return List including every airport from the network of connections.
+     */
     public List<Airport> getListOfAirports() {
         return new ArrayList<>(List.of(tokyo, mexico, atlanta, buenos_aires, paris, dubai, melbourne, cape_town, sao_louis, moscow));
     }
 
+    /**
+     * Gets an adjacency list of the graph (network of connections).
+     *
+     * @return Map of airports (vertexes) and list of their successors.
+     */
     public Map<Airport, List<Airport>> getAdjList() {
         return adjList;
     }
-    public Map<Airport, List<Boolean>> drawingHelperList(){return drawingHelperList;}
+
+    /**
+     * Gets a different type of adjacency list, corresponding to the original one, which is a helping tool to later draw one-way paths in different color than the bidirectional ones.
+     *
+     * @return Map of airports and list of Boolean values representing if a path to their successor is bidirectional or one-way.
+     */
+    public Map<Airport, List<Boolean>> getDrawingHelperList() {
+        return drawingHelperList;
+    }
 }

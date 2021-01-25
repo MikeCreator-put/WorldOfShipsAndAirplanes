@@ -52,7 +52,7 @@
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
                                       <Region HBox.hgrow="ALWAYS" />
-                                      <Label fx:id="informationsLabel" minHeight="286.0" minWidth="221.0" prefHeight="286.0" prefWidth="221.0" text="Here you'll see informations about chosen entity" wrapText="true">
+                                      <Label fx:id="informationLabel" minHeight="286.0" minWidth="221.0" prefHeight="286.0" prefWidth="221.0" text="Here you'll see informations about chosen entity" wrapText="true">
                                           <opaqueInsets>
                                               <Insets />
                                           </opaqueInsets>
